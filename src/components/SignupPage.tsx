@@ -248,15 +248,7 @@ export function SignupPage() {
                   </svg>
                   Continue with Google
                 </button>
-                <button className="w-full bg-white border border-black/10 hover:bg-black/5 text-primary px-4 py-3 rounded-full font-medium transition-colors flex items-center justify-center gap-3 shadow-sm">
-                  <svg className="w-5 h-5" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M10 0H0V10H10V0Z" fill="#F25022"/>
-                    <path d="M21 0H11V10H21V0Z" fill="#7FBA00"/>
-                    <path d="M10 11H0V21H10V11Z" fill="#00A4EF"/>
-                    <path d="M21 11H11V21H21V11Z" fill="#FFB900"/>
-                  </svg>
-                  Continue with Microsoft
-                </button>
+
               </div>
               
               <p className="text-center text-sm text-primary/60">
