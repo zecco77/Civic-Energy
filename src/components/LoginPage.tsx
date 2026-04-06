@@ -2,7 +2,8 @@ import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { Logo } from './Logo';
 import { useState, FormEvent } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { supabase } from '../supabase';
+import { auth, googleProvider } from '../firebase';
+import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 
 export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,27 +22,14 @@ export function LoginPage() {
     setError(null);
 
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      
-      if (signInError) {
-        if (signInError.message.includes('Invalid login credentials')) {
-          // Try to sign up if login fails
-          const { error: signUpError } = await supabase.auth.signUp({
-            email,
-            password,
-          });
-          if (signUpError) throw signUpError;
-        } else {
-          throw signInError;
-        }
-      }
-      
+      await signInWithEmailAndPassword(auth, email, password);
       navigate(from);
     } catch (err: any) {
-      setError(err.message || 'Failed to log in');
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+        setError('Invalid login credentials. Please try again or sign up.');
+      } else {
+        setError(err.message || 'Failed to log in');
+      }
     } finally {
       setLoading(false);
     }
@@ -51,13 +39,8 @@ export function LoginPage() {
     setLoading(true);
     setError(null);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin + from
-        }
-      });
-      if (error) throw error;
+      await signInWithPopup(auth, googleProvider);
+      navigate(from);
     } catch (err: any) {
       setError(err.message || 'Failed to log in with Google');
     } finally {

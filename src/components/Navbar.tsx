@@ -2,8 +2,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, User as UserIcon } from 'lucide-react';
 import { Logo } from './Logo';
 import { useState, useEffect } from 'react';
-import { supabase } from '../supabase';
-import type { User } from '@supabase/supabase-js';
+import { auth } from '../firebase';
+import { User, onAuthStateChanged } from 'firebase/auth';
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,15 +11,11 @@ export function Navbar() {
   const location = useLocation();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
+    return () => unsubscribe();
   }, []);
 
   const isActive = (path: string) => location.pathname === path;

@@ -6,7 +6,8 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, LineChart, Line, XAx
 import { BenchmarkingData } from '../services/chicagoData';
 import { calculateFinancials, formatCurrency } from '../services/financials';
 import { cn } from '../lib/utils';
-import { supabase } from '../supabase';
+import { auth } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 import { NeighborhoodMap } from './NeighborhoodMap';
 import { BuildingExplorer } from './BuildingExplorer';
@@ -37,27 +38,26 @@ export function Dashboard({ building, onBack }: DashboardProps) {
   const financials = refinedFinancials || baseFinancials;
 
   useEffect(() => {
-    const checkStatus = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        // We'll use mock data for now since we don't have a supabase database setup yet
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // We'll use mock data for now since we don't have a database setup yet
         setIsInPortfolio(false);
         setIsTracking(false);
       }
-    };
-    checkStatus();
+    });
+
+    return () => unsubscribe();
   }, [building.id, building.row_id]);
 
   const handleAddToPortfolio = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) {
+    if (!auth.currentUser) {
       navigate('/login', { state: { from: '/dashboard' } });
       return;
     }
 
     setLoadingAction('portfolio');
     try {
-      // We'll use mock data for now since we don't have a supabase database setup yet
+      // We'll use mock data for now since we don't have a database setup yet
       setIsInPortfolio(!isInPortfolio);
     } catch (error) {
       console.error('Error adding to portfolio:', error);
@@ -67,15 +67,14 @@ export function Dashboard({ building, onBack }: DashboardProps) {
   };
 
   const handleToggleTracking = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) {
+    if (!auth.currentUser) {
       navigate('/login', { state: { from: '/dashboard' } });
       return;
     }
 
     setLoadingAction('tracking');
     try {
-      // We'll use mock data for now since we don't have a supabase database setup yet
+      // We'll use mock data for now since we don't have a database setup yet
       setIsTracking(!isTracking);
     } catch (error) {
       console.error('Error toggling tracking:', error);

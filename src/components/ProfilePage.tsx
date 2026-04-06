@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../supabase';
-import type { User } from '@supabase/supabase-js';
+import { auth } from '../firebase';
+import { User, onAuthStateChanged, signOut } from 'firebase/auth';
 import { 
   User as UserIcon, 
   LogOut, 
@@ -60,29 +60,18 @@ export function ProfilePage({ onSelect }: ProfilePageProps) {
   });
 
   useEffect(() => {
-    const fetchSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        setUser(session.user);
-        // We'll use mock data for now since we don't have a supabase database setup yet
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        // We'll use mock data for now since we don't have a database setup yet
         setPortfolio(SAMPLE_DATA);
         setLoading(false);
       } else {
         navigate('/login');
       }
-    };
-
-    fetchSession();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser(session.user);
-      } else {
-        navigate('/login');
-      }
     });
 
-    return () => subscription.unsubscribe();
+    return () => unsubscribe();
   }, [navigate]);
 
   const stats = useMemo(() => {
@@ -98,7 +87,7 @@ export function ProfilePage({ onSelect }: ProfilePageProps) {
 
   const handleSignOut = async () => {
     try {
-      await supabase.auth.signOut();
+      await signOut(auth);
       navigate('/');
     } catch (err) {
       console.error("Failed to sign out:", err);

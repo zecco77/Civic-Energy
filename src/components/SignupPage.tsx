@@ -2,7 +2,9 @@ import { Eye, EyeOff, Search, ArrowLeft } from 'lucide-react';
 import { Logo } from './Logo';
 import { useState, FormEvent } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { supabase } from '../supabase';
+import { auth, googleProvider, db } from '../firebase';
+import { createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
 export function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,18 +35,19 @@ export function SignupPage() {
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-          }
-        }
-      });
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
       
-      if (error) throw error;
+      await updateProfile(user, {
+        displayName: `${firstName} ${lastName}`
+      });
+
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email: user.email,
+        displayName: `${firstName} ${lastName}`,
+        createdAt: new Date().toISOString()
+      });
       
       setStep(2); // Proceed to step 2
     } catch (err: any) {
@@ -58,13 +61,17 @@ export function SignupPage() {
     setLoading(true);
     setError(null);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin + from
-        }
-      });
-      if (error) throw error;
+      const userCredential = await signInWithPopup(auth, googleProvider);
+      const user = userCredential.user;
+      
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        createdAt: new Date().toISOString()
+      }, { merge: true });
+
+      navigate(from);
     } catch (err: any) {
       setError(err.message || 'Failed to sign up with Google');
     } finally {

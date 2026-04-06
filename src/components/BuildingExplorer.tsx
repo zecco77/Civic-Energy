@@ -23,7 +23,8 @@ import { calculateFinancials, formatCurrency } from '../services/financials';
 import { NeighborhoodMap } from './NeighborhoodMap';
 import { cn } from '../lib/utils';
 import { getWeatherData, WeatherData } from '../services/weatherService';
-import { supabase } from '../supabase';
+import { auth } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 interface BuildingExplorerProps {
   building: BenchmarkingData;
@@ -64,27 +65,26 @@ export function BuildingExplorer({ building, onClose, onReviewReport }: Building
     }
 
     // Check portfolio/tracking status if logged in
-    const checkStatus = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        // We'll use mock data for now since we don't have a supabase database setup yet
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // We'll use mock data for now since we don't have a database setup yet
         setIsInPortfolio(false);
         setIsTracking(false);
       }
-    };
-    checkStatus();
+    });
+
+    return () => unsubscribe();
   }, [building.latitude, building.longitude, building.address, building.id, building.row_id]);
 
   const handleAddToPortfolio = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) {
+    if (!auth.currentUser) {
       alert('Please log in to add buildings to your portfolio.');
       return;
     }
 
     setLoadingAction('portfolio');
     try {
-      // We'll use mock data for now since we don't have a supabase database setup yet
+      // We'll use mock data for now since we don't have a database setup yet
       setIsInPortfolio(!isInPortfolio);
     } catch (error) {
       console.error('Error adding to portfolio:', error);
@@ -94,15 +94,14 @@ export function BuildingExplorer({ building, onClose, onReviewReport }: Building
   };
 
   const handleToggleTracking = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) {
+    if (!auth.currentUser) {
       alert('Please log in to enable live tracking.');
       return;
     }
 
     setLoadingAction('tracking');
     try {
-      // We'll use mock data for now since we don't have a supabase database setup yet
+      // We'll use mock data for now since we don't have a database setup yet
       setIsTracking(!isTracking);
     } catch (error) {
       console.error('Error toggling tracking:', error);
