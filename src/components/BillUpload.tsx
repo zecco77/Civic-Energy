@@ -29,6 +29,8 @@ export function BillUpload({ currentFinancials, onRefinedData }: BillUploadProps
   const [manualCost, setManualCost] = useState('');
   const [manualUsage, setManualUsage] = useState('');
   const [manualProvider, setManualProvider] = useState('');
+  const [manualHvacType, setManualHvacType] = useState('');
+  const [manualOccupancy, setManualOccupancy] = useState('');
 
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncSteps, setSyncSteps] = useState([
@@ -341,6 +343,32 @@ export function BillUpload({ currentFinancials, onRefinedData }: BillUploadProps
                         onChange={(e) => setManualProvider(e.target.value)}
                         className="w-full px-4 py-2 rounded-xl border border-black/10 focus:border-accent focus:ring-1 focus:ring-accent outline-none"
                         placeholder="e.g. ComEd"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-primary/70 mb-1">HVAC Type (Optional)</label>
+                      <select 
+                        value={manualHvacType}
+                        onChange={(e) => setManualHvacType(e.target.value)}
+                        className="w-full px-4 py-2 rounded-xl border border-black/10 focus:border-accent focus:ring-1 focus:ring-accent outline-none bg-white"
+                      >
+                        <option value="">Select HVAC Type</option>
+                        <option value="rtu">Rooftop Units (RTU)</option>
+                        <option value="chiller_boiler">Chiller & Boiler</option>
+                        <option value="vav">Variable Air Volume (VAV)</option>
+                        <option value="heat_pump">Heat Pump</option>
+                        <option value="split_system">Split System</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-primary/70 mb-1">Occupancy (Optional)</label>
+                      <input 
+                        type="number" 
+                        value={manualOccupancy}
+                        onChange={(e) => setManualOccupancy(e.target.value)}
+                        className="w-full px-4 py-2 rounded-xl border border-black/10 focus:border-accent focus:ring-1 focus:ring-accent outline-none"
+                        placeholder="e.g. 150 (Number of people)"
                       />
                     </div>
                     <button 
