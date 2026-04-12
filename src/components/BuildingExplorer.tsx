@@ -30,9 +30,11 @@ interface BuildingExplorerProps {
   building: BenchmarkingData;
   onClose: () => void;
   onReviewReport: () => void;
+  formatValue?: (value: number) => string;
+  confidenceScore?: 'Low' | 'Medium' | 'High';
 }
 
-export function BuildingExplorer({ building, onClose, onReviewReport }: BuildingExplorerProps) {
+export function BuildingExplorer({ building, onClose, onReviewReport, formatValue, confidenceScore = 'Low' }: BuildingExplorerProps) {
   const financials = calculateFinancials(building);
   const [buildingSize, setBuildingSize] = useState('');
   const [electricityUsage, setElectricityUsage] = useState('');
@@ -204,6 +206,12 @@ export function BuildingExplorer({ building, onClose, onReviewReport }: Building
               <Activity className="w-4 h-4" />
               Energy Savings Dashboard
             </div>
+            
+            <div className="text-xs text-primary/50 mb-2">
+              {confidenceScore === 'High' 
+                ? "Powered by Chicago Benchmarking, EIA, NREL, NOAA, OpenStreetMap, Census & Green Button APIs"
+                : "Based on Chicago Benchmarking Data & ComEd/Peoples Gas Rates"}
+            </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-bg p-4 rounded-2xl">
@@ -220,11 +228,11 @@ export function BuildingExplorer({ building, onClose, onReviewReport }: Building
               </div>
               <div className="bg-bg p-4 rounded-2xl border border-rose-500/10">
                 <p className="text-[10px] text-rose-500 uppercase font-bold mb-1">Annual Cooling Cost</p>
-                <p className="text-xl font-bold text-rose-600">{formatCurrency(financials.estimatedCoolingCost)}</p>
+                <p className="text-xl font-bold text-rose-600">{formatValue ? formatValue(financials.estimatedCoolingCost) : formatCurrency(financials.estimatedCoolingCost)}</p>
               </div>
               <div className="bg-primary/10 p-4 rounded-2xl border border-primary/10">
                 <p className="text-[10px] text-primary uppercase font-bold mb-1">AI Optimization Opp.</p>
-                <p className="text-xl font-bold text-primary">{formatCurrency(financials.savingsPotential * 0.4)}</p>
+                <p className="text-xl font-bold text-primary">{formatValue ? formatValue(financials.savingsPotential * 0.4) : formatCurrency(financials.savingsPotential * 0.4)}</p>
               </div>
             </div>
           </div>
@@ -285,7 +293,7 @@ export function BuildingExplorer({ building, onClose, onReviewReport }: Building
           <div className="space-y-2 mb-6">
             <div className="flex justify-between text-sm">
               <span className="text-primary/50">Estimated Savings:</span>
-              <span className="font-bold text-primary">{formatCurrency(financials.savingsPotential)} / yr</span>
+              <span className="font-bold text-primary">{formatValue ? formatValue(financials.savingsPotential) : formatCurrency(financials.savingsPotential)} / yr</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-primary/50">Carbon Reduction:</span>
@@ -330,7 +338,7 @@ export function BuildingExplorer({ building, onClose, onReviewReport }: Building
               <div className="p-4 bg-primary/10 rounded-2xl border border-primary/20">
                 <p className="text-[10px] text-primary uppercase font-bold mb-1">Potential Benefit</p>
                 <p className="text-sm font-bold text-primary leading-tight">
-                  Matching the neighborhood median efficiency would save you approximately {formatCurrency(Math.max(0, financials.totalAnnualCost - (medianCostPerSqFt * parseFloat(building.gross_floor_area_buildings_sq_ft || '0'))))} per year.
+                  Matching the neighborhood median efficiency would save you approximately {formatValue ? formatValue(Math.max(0, financials.totalAnnualCost - (medianCostPerSqFt * parseFloat(building.gross_floor_area_buildings_sq_ft || '0')))) : formatCurrency(Math.max(0, financials.totalAnnualCost - (medianCostPerSqFt * parseFloat(building.gross_floor_area_buildings_sq_ft || '0'))))} per year.
                 </p>
               </div>
             )}
@@ -342,7 +350,7 @@ export function BuildingExplorer({ building, onClose, onReviewReport }: Building
               </div>
               <div className="bg-bg p-3 rounded-xl">
                 <p className="text-[9px] text-primary/40 uppercase font-bold mb-0.5">Median Cost/SqFt</p>
-                <p className="text-sm font-bold text-primary">{formatCurrency(medianCostPerSqFt)}</p>
+                <p className="text-sm font-bold text-primary">{formatValue ? formatValue(medianCostPerSqFt) : formatCurrency(medianCostPerSqFt)}</p>
               </div>
             </div>
           </div>

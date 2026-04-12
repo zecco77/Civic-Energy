@@ -41,6 +41,17 @@ export function Dashboard({ building, onBack }: DashboardProps) {
   const financials = refinedFinancials || baseFinancials;
   const buildingSize = parseFloat(building.gross_floor_area_buildings_sq_ft || '0');
 
+  const formatValue = (value: number) => {
+    if (refinedFinancials) {
+      return formatCurrency(value);
+    }
+    const min = value * 0.85;
+    const max = value * 1.15;
+    return `${formatCurrency(min)} - ${formatCurrency(max)}`;
+  };
+
+  const confidenceScore = refinedFinancials?.confidenceScore || 'Low';
+
   useEffect(() => {
     const checkPortfolio = async (uid: string) => {
       try {
@@ -357,8 +368,23 @@ export function Dashboard({ building, onBack }: DashboardProps) {
           <div className="space-y-4">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
-                <h2 className="text-3xl font-bold tracking-tight text-primary">Financial Snapshot</h2>
-                <p className="text-primary/60 mt-1">Based on Chicago Benchmarking Data & ComEd/Peoples Gas Rates</p>
+                <div className="flex items-center gap-3">
+                  <h2 className="text-3xl font-bold tracking-tight text-primary">Financial Snapshot</h2>
+                  <div className={cn(
+                    "px-2.5 py-1 rounded-full text-xs font-medium flex items-center gap-1", 
+                    confidenceScore === 'High' ? "bg-emerald-100 text-emerald-700" : 
+                    confidenceScore === 'Medium' ? "bg-blue-100 text-blue-700" : 
+                    "bg-amber-100 text-amber-700"
+                  )}>
+                    <CheckCircle2 className="w-3 h-3" />
+                    Data Confidence: {confidenceScore}
+                  </div>
+                </div>
+                <p className="text-primary/60 mt-1">
+                  {confidenceScore === 'High' 
+                    ? "Powered by Chicago Benchmarking, EIA, NREL, NOAA, OpenStreetMap, Census & Green Button APIs"
+                    : "Based on Chicago Benchmarking Data & ComEd/Peoples Gas Rates"}
+                </p>
               </div>
               <button 
                 onClick={() => setIsBillUploadPageOpen(true)}
@@ -420,6 +446,8 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                 building={building} 
                 onClose={() => setActiveTab('loss')}
                 onReviewReport={() => setIsReportModalOpen(true)}
+                formatValue={formatValue}
+                confidenceScore={confidenceScore}
               />
             </motion.div>
           )}
@@ -439,20 +467,20 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                       Critical Inefficiency Detected
                     </div>
                     <h3 className="text-5xl font-semibold text-primary tracking-tight mb-2">
-                      {formatCurrency(financials.monthlyLoss)} <span className="text-2xl text-primary/60 font-medium">/ mo</span>
+                      {formatValue(financials.monthlyLoss)} <span className="text-2xl text-primary/60 font-medium">/ mo</span>
                     </h3>
                     <p className="text-xl text-primary/70 mb-8">
-                      This building is losing an estimated <span className="text-rose-600 font-medium">{formatCurrency(financials.estimatedWastedEnergy)}</span> annually to energy inefficiency.
+                      This building is losing an estimated <span className="text-rose-600 font-medium">{formatValue(financials.estimatedWastedEnergy)}</span> annually to energy inefficiency.
                     </p>
                     
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
                       <div className="bg-bg rounded-2xl p-4">
                         <p className="text-sm text-primary/60 font-medium mb-1">Daily Bleed</p>
-                        <p className="text-2xl font-semibold text-primary">{formatCurrency(financials.dailyLoss)}</p>
+                        <p className="text-2xl font-semibold text-primary">{formatValue(financials.dailyLoss)}</p>
                       </div>
                       <div className="bg-bg rounded-2xl p-4">
                         <p className="text-sm text-primary/60 font-medium mb-1">Savings Potential</p>
-                        <p className="text-2xl font-semibold text-primary">{formatCurrency(financials.savingsPotential)}</p>
+                        <p className="text-2xl font-semibold text-primary">{formatValue(financials.savingsPotential)}</p>
                       </div>
                       <div className="bg-bg rounded-2xl p-4 col-span-2 md:col-span-1">
                         <p className="text-sm text-primary/60 font-medium mb-1">Potential Reduction</p>
@@ -465,12 +493,12 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="bg-emerald-50 rounded-2xl p-4 border border-emerald-100">
                           <p className="text-sm text-emerald-800 font-medium mb-1">Increased NOI</p>
-                          <p className="text-2xl font-semibold text-emerald-600">+{formatCurrency(financials.increasedNOI)}</p>
+                          <p className="text-2xl font-semibold text-emerald-600">+{formatValue(financials.increasedNOI)}</p>
                           <p className="text-xs text-emerald-700/70 mt-1">Directly from energy savings</p>
                         </div>
                         <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100">
                           <p className="text-sm text-blue-800 font-medium mb-1">Building Value Increase</p>
-                          <p className="text-2xl font-semibold text-blue-600">+{formatCurrency(financials.increasedBuildingValue)}</p>
+                          <p className="text-2xl font-semibold text-blue-600">+{formatValue(financials.increasedBuildingValue)}</p>
                           <p className="text-xs text-blue-700/70 mt-1">Based on {financials.capRate * 100}% cap rate</p>
                         </div>
                       </div>
@@ -502,7 +530,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                         <DollarSign className="w-4 h-4 text-primary" />
                         <p className="text-xs text-primary/60 font-medium">Cost Intensity</p>
                       </div>
-                      <p className="text-xl font-semibold text-primary tracking-tight">{formatCurrency(financials.costPerSqFt)} <span className="text-xs font-normal text-primary/50">/sqft</span></p>
+                      <p className="text-xl font-semibold text-primary tracking-tight">{formatValue(financials.costPerSqFt)} <span className="text-xs font-normal text-primary/50">/sqft</span></p>
                     </div>
                     <div className="bg-bg rounded-2xl p-4">
                       <div className="flex items-center gap-2 mb-2">
@@ -523,7 +551,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                         <Star className="w-4 h-4 text-primary" />
                         <p className="text-xs text-primary/60 font-medium">179D Tax Deduction</p>
                       </div>
-                      <p className="text-xl font-semibold text-primary tracking-tight">{formatCurrency(financials.estimatedTaxDeduction)}</p>
+                      <p className="text-xl font-semibold text-primary tracking-tight">{formatValue(financials.estimatedTaxDeduction)}</p>
                       <p className="text-[10px] text-primary/40 mt-1">Estimated IRA Federal Credit</p>
                     </div>
                   </div>
@@ -561,7 +589,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     <h4 className="font-medium text-primary/70">Total Energy Spend</h4>
                     <DollarSign className="w-5 h-5 text-primary/40" />
                   </div>
-                  <p className="text-3xl font-semibold text-primary tracking-tight">{formatCurrency(financials.totalAnnualCost)}</p>
+                  <p className="text-3xl font-semibold text-primary tracking-tight">{formatValue(financials.totalAnnualCost)}</p>
                   <p className="text-sm text-primary/60 mt-2">Estimated annual cost</p>
                   
                   {pieData.length > 0 && (
@@ -583,7 +611,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                             ))}
                           </Pie>
                           <Tooltip 
-                            formatter={(value: number) => formatCurrency(value)}
+                            formatter={(value: number) => formatValue(value)}
                             contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                           />
                         </PieChart>
@@ -597,7 +625,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                         <span className="w-2 h-2 rounded-full bg-blue-500"></span>
                         Electricity (ComEd)
                       </span>
-                      <span className="font-medium text-primary">{formatCurrency(financials.electricityCost)}</span>
+                      <span className="font-medium text-primary">{formatValue(financials.electricityCost)}</span>
                     </div>
                     
                     <div className="flex justify-between items-center text-sm pt-2">
@@ -605,18 +633,18 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                         <span className="w-2 h-2 rounded-full bg-orange-500"></span>
                         Natural Gas (Peoples Gas)
                       </span>
-                      <span className="font-medium text-primary">{formatCurrency(financials.gasCost)}</span>
+                      <span className="font-medium text-primary">{formatValue(financials.gasCost)}</span>
                     </div>
                   </div>
                   
                   <div className="mt-4 pt-4 border-t border-black/5 space-y-2">
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-primary/60">Est. Cooling Cost</span>
-                      <span className="font-medium text-blue-600">{formatCurrency(financials.estimatedCoolingCost)}</span>
+                      <span className="font-medium text-blue-600">{formatValue(financials.estimatedCoolingCost)}</span>
                     </div>
                     <div className="flex justify-between items-center text-xs">
                       <span className="text-primary/60">Est. Heating Cost</span>
-                      <span className="font-medium text-orange-600">{formatCurrency(financials.estimatedHeatingCost)}</span>
+                      <span className="font-medium text-orange-600">{formatValue(financials.estimatedHeatingCost)}</span>
                     </div>
                   </div>
                 </div>
@@ -688,11 +716,13 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   <div className="shrink-0 bg-bg p-4 rounded-2xl text-center">
                     <p className="text-sm text-primary/60 font-medium mb-1">Data Confidence</p>
                     <div className="flex items-center gap-1 justify-center text-primary mb-2">
-                      <div className="w-2 h-4 bg-primary rounded-sm"></div>
-                      <div className="w-2 h-4 bg-primary rounded-sm"></div>
-                      <div className={cn("w-2 h-4 rounded-sm", building.energy_star_score ? "bg-primary" : "bg-primary/20")}></div>
+                      <div className={cn("w-2 h-4 rounded-sm", confidenceScore === 'High' || confidenceScore === 'Medium' || confidenceScore === 'Low' ? "bg-primary" : "bg-primary/20")}></div>
+                      <div className={cn("w-2 h-4 rounded-sm", confidenceScore === 'High' || confidenceScore === 'Medium' ? "bg-primary" : "bg-primary/20")}></div>
+                      <div className={cn("w-2 h-4 rounded-sm", confidenceScore === 'High' ? "bg-primary" : "bg-primary/20")}></div>
                     </div>
-                    <p className="text-xs text-primary/50">{building.energy_star_score ? 'High (Verified Benchmarking)' : 'Medium (Estimated via NREL/EIA)'}</p>
+                    <p className="text-xs font-bold text-primary uppercase">
+                      {confidenceScore}
+                    </p>
                   </div>
                 </div>
 
@@ -703,6 +733,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     impact="High"
                     dollarImpact={financials.diagnostics.hvac}
                     icon={<Settings className="w-6 h-6 text-orange-500" />}
+                    formatValue={formatValue}
                   />
                   <DiagnosticCard 
                     title="Envelope & Insulation Gaps"
@@ -710,6 +741,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     impact="High"
                     dollarImpact={financials.diagnostics.envelope}
                     icon={<Activity className="w-6 h-6 text-blue-500" />}
+                    formatValue={formatValue}
                   />
                   <DiagnosticCard 
                     title="Lighting Inefficiency"
@@ -717,6 +749,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     impact="Medium"
                     dollarImpact={financials.diagnostics.lighting}
                     icon={<Zap className="w-6 h-6 text-yellow-500" />}
+                    formatValue={formatValue}
                   />
                   <DiagnosticCard 
                     title="Peak Demand Charges"
@@ -724,6 +757,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     impact="Medium"
                     dollarImpact={financials.diagnostics.peakDemand}
                     icon={<TrendingDown className="w-6 h-6 text-rose-500" />}
+                    formatValue={formatValue}
                   />
                   <DiagnosticCard 
                     title="Plug Load & Equipment Waste"
@@ -731,6 +765,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     impact="Low"
                     dollarImpact={financials.diagnostics.plugLoad}
                     icon={<Wrench className="w-6 h-6 text-primary/60" />}
+                    formatValue={formatValue}
                   />
                 </div>
               </div>
@@ -753,7 +788,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                 <div className="bg-primary/5 p-4 rounded-2xl flex items-center gap-6">
                   <div>
                     <p className="text-xs text-primary font-medium uppercase tracking-wider mb-1">Selected 10-Year Value</p>
-                    <p className="text-2xl font-semibold text-primary tracking-tight">{formatCurrency(selectedTenYearSavings)}</p>
+                    <p className="text-2xl font-semibold text-primary tracking-tight">{formatValue(selectedTenYearSavings)}</p>
                   </div>
                   <div className="w-px h-10 bg-primary/20"></div>
                   <div>
@@ -778,6 +813,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     incentives={['ComEd Standard Lighting Rebate', '179D Tax Deduction Eligible']}
                     isSelected={selectedActions.includes(0)}
                     onToggle={() => toggleAction(0)}
+                    formatValue={formatValue}
                   />
                 </div>
                 <ActionCard 
@@ -790,6 +826,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   incentives={['ComEd Custom HVAC Rebate', 'IRA Commercial Credit']}
                   isSelected={selectedActions.includes(1)}
                   onToggle={() => toggleAction(1)}
+                  formatValue={formatValue}
                 />
                 <ActionCard 
                   title="Building Envelope Sealing & Insulation"
@@ -801,6 +838,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   incentives={['Peoples Gas Prescriptive Rebate']}
                   isSelected={selectedActions.includes(2)}
                   onToggle={() => toggleAction(2)}
+                  formatValue={formatValue}
                 />
                 <ActionCard 
                   title="Building Automation System (BAS) Upgrade"
@@ -812,6 +850,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   incentives={['ComEd Custom Rebate', 'Retro-Commissioning (RCx) Incentive']}
                   isSelected={selectedActions.includes(3)}
                   onToggle={() => toggleAction(3)}
+                  formatValue={formatValue}
                 />
                 <ActionCard 
                   title="High-Efficiency Boiler Replacement"
@@ -823,6 +862,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   incentives={['Peoples Gas Custom Rebate', 'IRA Commercial Credit']}
                   isSelected={selectedActions.includes(4)}
                   onToggle={() => toggleAction(4)}
+                  formatValue={formatValue}
                 />
                 <ActionCard 
                   title="Variable Frequency Drives (VFDs)"
@@ -834,6 +874,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   incentives={['ComEd Standard VFD Rebate']}
                   isSelected={selectedActions.includes(5)}
                   onToggle={() => toggleAction(5)}
+                  formatValue={formatValue}
                 />
                 <ActionCard 
                   title="Commercial Solar PV Installation"
@@ -845,6 +886,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   incentives={['Illinois Shines (SRECs)', '30% Federal ITC']}
                   isSelected={selectedActions.includes(6)}
                   onToggle={() => toggleAction(6)}
+                  formatValue={formatValue}
                 />
                 <ActionCard 
                   title="Domestic Hot Water (DHW) Electrification"
@@ -856,6 +898,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   incentives={['ComEd Heat Pump Rebate', 'IRA Electrification Rebate']}
                   isSelected={selectedActions.includes(7)}
                   onToggle={() => toggleAction(7)}
+                  formatValue={formatValue}
                 />
               </div>
             </motion.div>
@@ -1004,21 +1047,21 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                           <h5 className="text-sm font-semibold text-primary mb-2">Estimated Bid Breakdown</h5>
                           <div className="flex justify-between text-sm">
                             <span className="text-primary/60">Gross Project Cost</span>
-                            <span className="font-medium text-primary">{formatCurrency(bidAmount)}</span>
+                            <span className="font-medium text-primary">{formatValue(bidAmount)}</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-primary/60">Est. Utility Rebates</span>
-                            <span className="font-medium text-emerald-600">-{formatCurrency(rebates)}</span>
+                            <span className="font-medium text-emerald-600">-{formatValue(rebates)}</span>
                           </div>
                           <div className="h-px bg-black/5 my-2"></div>
                           <div className="flex justify-between text-sm font-semibold">
                             <span className="text-primary">Net Cost to You</span>
-                            <span className="text-primary">{formatCurrency(netCost)}</span>
+                            <span className="text-primary">{formatValue(netCost)}</span>
                           </div>
                           <div className="grid grid-cols-2 gap-2 mt-4 pt-4 border-t border-black/5">
                             <div>
                               <p className="text-xs text-primary/50 uppercase tracking-wider mb-1">Est. Savings</p>
-                              <p className="font-medium text-primary">{formatCurrency(estimatedSavings)}/yr</p>
+                              <p className="font-medium text-primary">{formatValue(estimatedSavings)}/yr</p>
                             </div>
                             <div>
                               <p className="text-xs text-primary/50 uppercase tracking-wider mb-1">Payback</p>
@@ -1063,7 +1106,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     <h3 className="font-medium text-primary">Projected Annual Savings</h3>
                   </div>
                   <div className="text-3xl font-semibold text-primary tracking-tight mb-2">
-                    {formatCurrency(selectedSavings)}
+                    {formatValue(selectedSavings)}
                   </div>
                   <div className="flex items-center gap-1 text-sm text-primary font-medium">
                     <TrendingDown className="w-4 h-4" />
@@ -1135,7 +1178,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                       <YAxis axisLine={false} tickLine={false} tick={{ fill: '#6b7280', fontSize: 12 }} dx={-10} tickFormatter={(value) => `$${value}`} />
                       <Tooltip 
                         contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
-                        formatter={(value: number) => formatCurrency(value)}
+                        formatter={(value: number) => formatValue(value)}
                       />
                       <Legend iconType="circle" wrapperStyle={{ paddingTop: '20px' }} />
                       <Line type="monotone" dataKey="baseline" name="Baseline Cost" stroke="#e5e7eb" strokeWidth={2} dot={false} activeDot={false} />
@@ -1315,7 +1358,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
   );
 }
 
-function DiagnosticCard({ title, description, impact, dollarImpact, icon }: { title: string, description: string, impact: string, dollarImpact?: number, icon: React.ReactNode }) {
+function DiagnosticCard({ title, description, impact, dollarImpact, icon, formatValue }: { title: string, description: string, impact: string, dollarImpact?: number, icon: React.ReactNode, formatValue?: (value: number) => string }) {
   return (
     <div className="p-6 rounded-3xl bg-bg hover:bg-white hover:shadow-[0_2px_10px_rgba(0,0,0,0.04)] transition-all">
       <div className="flex items-start gap-4">
@@ -1336,7 +1379,7 @@ function DiagnosticCard({ title, description, impact, dollarImpact, icon }: { ti
           {dollarImpact !== undefined && (
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-rose-500/5 rounded-full text-sm font-medium text-rose-600">
               <TrendingDown className="w-4 h-4" />
-              Est. {formatCurrency(dollarImpact)} / yr
+              Est. {formatValue ? formatValue(dollarImpact) : formatCurrency(dollarImpact)} / yr
             </div>
           )}
         </div>
@@ -1345,7 +1388,7 @@ function DiagnosticCard({ title, description, impact, dollarImpact, icon }: { ti
   );
 }
 
-export function ActionCard({ title, description, savings, cost, paybackMonths, roi, incentives, isSelected, onToggle }: any) {
+export function ActionCard({ title, description, savings, cost, paybackMonths, roi, incentives, isSelected, onToggle, formatValue }: any) {
   return (
     <div 
       onClick={onToggle}
@@ -1386,12 +1429,12 @@ export function ActionCard({ title, description, savings, cost, paybackMonths, r
         <div className="flex flex-wrap lg:flex-nowrap gap-4 lg:gap-8 items-center bg-bg p-4 rounded-2xl">
           <div className="space-y-1">
             <p className="text-xs text-primary/50 font-medium uppercase tracking-wider">Est. Savings</p>
-            <p className="text-2xl font-semibold text-primary tracking-tight">{formatCurrency(savings)}<span className="text-sm font-normal text-primary/50">/yr</span></p>
+            <p className="text-2xl font-semibold text-primary tracking-tight">{formatValue ? formatValue(savings) : formatCurrency(savings)}<span className="text-sm font-normal text-primary/50">/yr</span></p>
           </div>
           <div className="w-px h-12 bg-black/5 hidden lg:block"></div>
           <div className="space-y-1">
             <p className="text-xs text-primary/50 font-medium uppercase tracking-wider">Est. Cost</p>
-            <p className="text-xl font-semibold text-primary tracking-tight">{formatCurrency(cost)}</p>
+            <p className="text-xl font-semibold text-primary tracking-tight">{formatValue ? formatValue(cost) : formatCurrency(cost)}</p>
           </div>
           <div className="w-px h-12 bg-black/5 hidden lg:block"></div>
           <div className="space-y-1">
