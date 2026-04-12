@@ -11,7 +11,7 @@ export function PlatformPage() {
           How It Works
         </div>
         <h1 className="text-5xl md:text-7xl font-semibold tracking-tight mb-8 max-w-4xl mx-auto leading-tight text-primary">
-          From address to action plan in under 60 seconds.
+          From address to action plan in under 3 seconds.
         </h1>
         <p className="text-xl text-primary/60 mb-12 max-w-2xl mx-auto leading-relaxed">
           Civic Energy connects public building data, utility rates, and AI analysis to show you exactly where your money is going — and how to get it back.

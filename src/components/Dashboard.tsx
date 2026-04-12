@@ -6,8 +6,9 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, LineChart, Line, XAx
 import { BenchmarkingData } from '../services/chicagoData';
 import { calculateFinancials, formatCurrency } from '../services/financials';
 import { cn } from '../lib/utils';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
+import { collection, doc, setDoc, deleteDoc, getDoc, query, where, getDocs } from 'firebase/firestore';
 
 import { NeighborhoodMap } from './NeighborhoodMap';
 import { BuildingExplorer } from './BuildingExplorer';
@@ -29,25 +30,50 @@ export function Dashboard({ building, onBack }: DashboardProps) {
   const [trackingPeriod, setTrackingPeriod] = useState<'1Y' | 'YTD' | 'ALL'>('1Y');
   const [selectedActions, setSelectedActions] = useState<number[]>([0, 1, 2]); // Default all selected
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isBillUploadPageOpen, setIsBillUploadPageOpen] = useState(false);
   const [isInPortfolio, setIsInPortfolio] = useState(false);
+  const [portfolioDocId, setPortfolioDocId] = useState<string | null>(null);
   const [isTracking, setIsTracking] = useState(false);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [refinedFinancials, setRefinedFinancials] = useState<any>(null);
 
   const baseFinancials = calculateFinancials(building);
   const financials = refinedFinancials || baseFinancials;
+  const buildingSize = parseFloat(building.gross_floor_area_buildings_sq_ft || '0');
 
   useEffect(() => {
+    const checkPortfolio = async (uid: string) => {
+      try {
+        const q = query(
+          collection(db, 'portfolioBuildings'),
+          where('uid', '==', uid),
+          where('buildingId', '==', building.id)
+        );
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          setIsInPortfolio(true);
+          setPortfolioDocId(querySnapshot.docs[0].id);
+        } else {
+          setIsInPortfolio(false);
+          setPortfolioDocId(null);
+        }
+      } catch (error) {
+        console.error("Error checking portfolio:", error);
+      }
+    };
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // We'll use mock data for now since we don't have a database setup yet
-        setIsInPortfolio(false);
+        checkPortfolio(user.uid);
         setIsTracking(false);
+      } else {
+        setIsInPortfolio(false);
+        setPortfolioDocId(null);
       }
     });
 
     return () => unsubscribe();
-  }, [building.id, building.row_id]);
+  }, [building.id]);
 
   const handleAddToPortfolio = async () => {
     if (!auth.currentUser) {
@@ -57,8 +83,28 @@ export function Dashboard({ building, onBack }: DashboardProps) {
 
     setLoadingAction('portfolio');
     try {
-      // We'll use mock data for now since we don't have a database setup yet
-      setIsInPortfolio(!isInPortfolio);
+      if (isInPortfolio && portfolioDocId) {
+        await deleteDoc(doc(db, 'portfolioBuildings', portfolioDocId));
+        setIsInPortfolio(false);
+        setPortfolioDocId(null);
+      } else {
+        const newDocRef = doc(collection(db, 'portfolioBuildings'));
+        await setDoc(newDocRef, {
+          uid: auth.currentUser.uid,
+          buildingId: building.id,
+          propertyName: building.property_name || '',
+          address: building.address || '',
+          propertyType: building.primary_property_type || '',
+          sqFt: parseFloat(building.gross_floor_area_buildings_sq_ft || '0'),
+          yearBuilt: parseInt(building.year_built || '0', 10),
+          energyStarScore: parseFloat(building.energy_star_score || '0'),
+          ghgEmissions: parseFloat(building.total_ghg_emissions_metric_tons_co2e || '0'),
+          customName: building.property_name || building.address,
+          createdAt: new Date().toISOString()
+        });
+        setIsInPortfolio(true);
+        setPortfolioDocId(newDocRef.id);
+      }
     } catch (error) {
       console.error('Error adding to portfolio:', error);
     } finally {
@@ -224,6 +270,35 @@ export function Dashboard({ building, onBack }: DashboardProps) {
     { name: 'Natural Gas', value: financials.gasCost, color: '#f97316' },
   ].filter(d => d.value > 0);
 
+  if (isBillUploadPageOpen) {
+    return (
+      <div className="min-h-screen bg-bg flex flex-col">
+        <header className="bg-white border-b border-black/5 sticky top-0 z-30">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setIsBillUploadPageOpen(false)}
+                className="p-2 -ml-2 hover:bg-black/5 rounded-full transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5 text-primary" />
+              </button>
+              <div>
+                <h1 className="text-xl font-bold text-primary tracking-tight">Impact Analysis</h1>
+                <p className="text-sm text-primary/60">{building.property_name || building.address}</p>
+              </div>
+            </div>
+          </div>
+        </header>
+        <main className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+          <BillUpload 
+            currentFinancials={baseFinancials}
+            onRefinedData={(data) => setRefinedFinancials(data)}
+          />
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-bg text-primary pb-20">
       {/* Header */}
@@ -285,6 +360,13 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                 <h2 className="text-3xl font-bold tracking-tight text-primary">Financial Snapshot</h2>
                 <p className="text-primary/60 mt-1">Based on Chicago Benchmarking Data & ComEd/Peoples Gas Rates</p>
               </div>
+              <button 
+                onClick={() => setIsBillUploadPageOpen(true)}
+                className="bg-accent hover:bg-accent-dark text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-colors shadow-sm flex items-center gap-2"
+              >
+                <FileText className="w-4 h-4" />
+                Upload Bills & Utilities
+              </button>
             </div>
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <div className="flex bg-black/5 p-1 rounded-full overflow-x-auto hide-scrollbar max-w-[calc(100vw-2rem)] sm:max-w-none">
@@ -319,12 +401,6 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   Savings Tracking
                 </button>
                 <button 
-                  onClick={() => setActiveTab('bills')}
-                  className={cn("px-4 py-1.5 text-sm font-medium rounded-full transition-all whitespace-nowrap flex items-center gap-1.5", activeTab === 'bills' ? "bg-white text-primary shadow-[0_1px_3px_rgba(0,0,0,0.1)]" : "text-primary/60 hover:text-primary")}
-                >
-                  Bill Upload
-                </button>
-                <button 
                   onClick={() => setActiveTab('map')}
                   className={cn("px-4 py-1.5 text-sm font-medium rounded-full transition-all whitespace-nowrap flex items-center gap-1.5", activeTab === 'map' ? "bg-white text-primary shadow-[0_1px_3px_rgba(0,0,0,0.1)]" : "text-primary/60 hover:text-primary")}
                 >
@@ -344,18 +420,6 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                 building={building} 
                 onClose={() => setActiveTab('loss')}
                 onReviewReport={() => setIsReportModalOpen(true)}
-              />
-            </motion.div>
-          )}
-
-          {activeTab === 'bills' && (
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
-              <BillUpload 
-                currentFinancials={baseFinancials}
-                onRefinedData={(data) => setRefinedFinancials(data)}
               />
             </motion.div>
           )}

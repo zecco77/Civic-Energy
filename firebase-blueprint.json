@@ -22,12 +22,61 @@
         }
       },
       "required": ["uid", "email"]
+    },
+    "PortfolioBuilding": {
+      "title": "PortfolioBuilding",
+      "description": "A building saved to a user's portfolio",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "User ID of the owner"
+        },
+        "buildingId": {
+          "type": "string",
+          "description": "ID of the building from Chicago Data Portal"
+        },
+        "propertyName": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "propertyType": {
+          "type": "string"
+        },
+        "sqFt": {
+          "type": "number"
+        },
+        "yearBuilt": {
+          "type": "number"
+        },
+        "energyStarScore": {
+          "type": "number"
+        },
+        "ghgEmissions": {
+          "type": "number"
+        },
+        "customName": {
+          "type": "string",
+          "description": "User's custom name for the building"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "buildingId", "address", "createdAt"]
     }
   },
   "firestore": {
     "/users/{userId}": {
       "schema": { "$ref": "#/entities/User" },
       "description": "User profiles"
+    },
+    "/portfolioBuildings/{buildingId}": {
+      "schema": { "$ref": "#/entities/PortfolioBuilding" },
+      "description": "Buildings saved by users"
     }
   }
 }

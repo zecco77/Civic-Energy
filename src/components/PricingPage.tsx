@@ -47,85 +47,95 @@ export function PricingPage() {
       {/* Pricing Tier Cards Section */}
       <section className="pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-          {/* Free Tier */}
+          {/* Starter Tier */}
           <div className="bg-bg rounded-[2rem] p-8 border border-black/5 h-full flex flex-col shadow-sm">
-            <h3 className="text-2xl font-semibold text-primary mb-2 tracking-tight">Discover</h3>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              <h3 className="text-2xl font-semibold text-primary tracking-tight">Starter</h3>
+            </div>
+            <p className="text-primary/60 text-sm mb-6">Small Buildings (Under 50K sq ft)</p>
             <div className="flex items-baseline gap-1 mb-6">
-              <span className="text-5xl font-semibold text-primary tracking-tight">$0</span>
-              <span className="text-primary/60">/forever</span>
+              <span className="text-5xl font-semibold text-primary tracking-tight">$199</span>
+              <span className="text-primary/60">/report</span>
             </div>
             <div className="h-px w-full bg-black/5 mb-8"></div>
             <ul className="space-y-4 mb-8 flex-grow">
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>Building loss estimate</span>
+                <span>Energy efficiency score</span>
               </li>
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>Annual energy cost breakdown</span>
+                <span>Annual energy & cooling cost</span>
               </li>
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>ENERGY STAR score and peer rank</span>
+                <span>Basic savings estimate</span>
               </li>
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>Top inefficiency categories identified</span>
+                <span>Key inefficiency insights</span>
               </li>
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>One improvement recommendation preview</span>
+                <span>1–2 optimization suggestions</span>
               </li>
             </ul>
+            <div className="mt-auto pt-6 border-t border-black/5 mb-6">
+              <p className="text-sm font-medium text-primary/80">👉 Best for: small property owners</p>
+            </div>
             <Link 
               to="/platform"
               className="w-full bg-white border border-black/10 hover:bg-black/5 text-primary px-6 py-4 rounded-full font-medium text-lg transition-colors shadow-sm text-center"
             >
-              Start Free
+              Get Started
             </Link>
           </div>
 
-          {/* Report Tier */}
+          {/* Growth Tier */}
           <div className="bg-white rounded-[2rem] p-8 border-2 border-primary relative shadow-md h-full flex flex-col transform md:-translate-y-4">
             <div className="absolute top-0 right-0 bg-primary text-white text-xs font-semibold px-4 py-1.5 rounded-bl-2xl rounded-tr-[1.8rem] uppercase tracking-wider">
               Most Popular
             </div>
-            <h3 className="text-2xl font-semibold text-primary mb-2 tracking-tight">Analyze</h3>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+              <h3 className="text-2xl font-semibold text-primary tracking-tight">Growth</h3>
+            </div>
+            <p className="text-primary/60 text-sm mb-6">Mid-Size Buildings (50K–200K sq ft)</p>
             <div className="flex items-baseline gap-1 mb-6">
-              <span className="text-5xl font-semibold text-primary tracking-tight">$149</span>
-              <span className="text-primary/60">/building</span>
+              <span className="text-5xl font-semibold text-primary tracking-tight">$499</span>
+              <span className="text-primary/60">/report</span>
             </div>
             <div className="h-px w-full bg-primary/20 mb-8"></div>
             <ul className="space-y-4 mb-8 flex-grow">
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>Everything in Discover</span>
+                <span className="font-semibold text-primary">Everything in Starter</span>
               </li>
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span className="font-semibold text-primary">Full premium report PDF</span>
+                <span>Detailed energy breakdown</span>
               </li>
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>All three prioritized recommendations with full ROI detail</span>
+                <span>Cooling cost analysis</span>
               </li>
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>Complete rebate and incentive eligibility list</span>
+                <span>ROI & payback calculation</span>
               </li>
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>Five and ten year savings projections</span>
+                <span>Priority upgrade recommendations</span>
               </li>
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>Implementation cost ranges for Chicago market</span>
-              </li>
-              <li className="flex items-start gap-3 text-primary/70">
-                <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>Downloadable and shareable report link</span>
+                <span>Carbon reduction insights</span>
               </li>
             </ul>
+            <div className="mt-auto pt-6 border-t border-primary/10 mb-6">
+              <p className="text-sm font-medium text-primary/80">👉 Best for: commercial & multi-unit buildings</p>
+            </div>
             <Link 
               to="/payment"
               className="w-full bg-accent hover:bg-accent-dark text-white px-6 py-4 rounded-full font-medium text-lg transition-colors shadow-sm text-center"
@@ -134,46 +144,51 @@ export function PricingPage() {
             </Link>
           </div>
 
-          {/* Portfolio Tier */}
+          {/* Pro Tier */}
           <div className="bg-bg rounded-[2rem] p-8 border border-black/5 h-full flex flex-col shadow-sm">
-            <h3 className="text-2xl font-semibold text-primary mb-2 tracking-tight">Optimize</h3>
-            <div className="flex items-baseline gap-1 mb-6 min-h-[4rem]">
-              <span className="text-3xl font-semibold text-primary tracking-tight">Enterprise</span>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <h3 className="text-2xl font-semibold text-primary tracking-tight">Pro</h3>
+            </div>
+            <p className="text-primary/60 text-sm mb-6">Large Commercial (200K+ sq ft)</p>
+            <div className="flex items-baseline gap-1 mb-6">
+              <span className="text-4xl font-semibold text-primary tracking-tight">$999+</span>
+              <span className="text-primary/60">/report</span>
             </div>
             <div className="h-px w-full bg-black/5 mb-8"></div>
             <ul className="space-y-4 mb-8 flex-grow">
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>Everything in Analyze for unlimited buildings</span>
+                <span className="font-semibold text-primary">Everything in Growth</span>
               </li>
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>Portfolio dashboard with aggregate savings view</span>
+                <span>Advanced AI optimization insights</span>
               </li>
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>Monthly utility tracking and predicted vs actual dashboard</span>
+                <span>Custom savings scenarios</span>
               </li>
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>Automatic alerts for new rebate programs</span>
+                <span>HVAC & infrastructure deep analysis</span>
               </li>
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>Dedicated account support</span>
+                <span>Lake cooling feasibility (if applicable)</span>
               </li>
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>API access for property management integrations</span>
+                <span>Connect with verified contractors</span>
               </li>
               <li className="flex items-start gap-3 text-primary/70">
                 <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span>White-label option available</span>
+                <span>Implementation support (optional add-on)</span>
               </li>
             </ul>
             <Link 
               to="/contact"
-              className="w-full bg-white border border-black/10 hover:bg-black/5 text-primary px-6 py-4 rounded-full font-medium text-lg transition-colors shadow-sm text-center"
+              className="w-full bg-white border border-black/10 hover:bg-black/5 text-primary px-6 py-4 rounded-full font-medium text-lg transition-colors shadow-sm text-center mt-auto"
             >
               Talk to Sales
             </Link>

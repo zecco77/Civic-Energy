@@ -121,10 +121,10 @@ export function LandingPage({ onSelect }: LandingPageProps) {
                 Chicago Commercial Buildings
               </div>
               <h1 className="text-5xl md:text-7xl font-semibold tracking-tight text-primary">
-                Chicago's <span className="text-primary">Commercial Energy</span> Intelligence.
+                Chicago’s Commercial Energy Intelligence for Building Owners
               </h1>
               <p className="text-xl text-primary/60 max-w-2xl mx-auto leading-relaxed">
-                The only platform that tells Chicago building owners exactly how much money they are losing to energy inefficiency today.
+                See exactly how much your building in Chicago is losing to energy inefficiency - and how to turn it into savings.
               </p>
             </div>
 
@@ -226,7 +226,7 @@ export function LandingPage({ onSelect }: LandingPageProps) {
           <div className="space-y-8">
             <div className="h-64 rounded-3xl overflow-hidden">
               <img 
-                src="https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?q=80&w=2940&auto=format&fit=crop" 
+                src="https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?q=80&w=1544&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
                 alt="Emissions" 
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
@@ -269,8 +269,42 @@ export function LandingPage({ onSelect }: LandingPageProps) {
         </div>
       </section>
 
+      {/* Target Audience Section */}
+      <section className="py-16 px-6 max-w-7xl mx-auto">
+        <div className="mb-16 text-center">
+          <h2 className="text-4xl md:text-5xl font-light tracking-tight">
+            Who we serve
+          </h2>
+        </div>
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="bg-white rounded-3xl p-10 border border-black/5 shadow-sm">
+            <h3 className="text-2xl font-semibold mb-2 text-primary">Commercial Building Owners</h3>
+            <p className="text-sm text-primary/60 mb-6">(Office towers, multi-family, hotels)</p>
+            <p className="text-lg font-medium leading-relaxed text-primary">
+              Care about reducing energy cost ($) and ROI.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-3xl p-10 border border-black/5 shadow-sm">
+            <h3 className="text-2xl font-semibold mb-2 text-primary">Property / Facility Managers</h3>
+            <div className="h-5 mb-6"></div>
+            <p className="text-lg font-medium leading-relaxed text-primary">
+              Care about operations, HVAC performance, maintenance planning.
+            </p>
+          </div>
+
+          <div className="bg-white rounded-3xl p-10 border border-black/5 shadow-sm">
+            <h3 className="text-2xl font-semibold mb-2 text-primary">Real Estate Portfolio Managers / REITs</h3>
+            <div className="h-5 mb-6"></div>
+            <p className="text-lg font-medium leading-relaxed text-primary">
+              Care about portfolio-level savings, asset value, ESG metrics.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Solution Intro */}
-      <section className="py-16 px-6 max-w-7xl mx-auto border-t border-primary/20">
+      <section className="py-16 px-6 max-w-7xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12">
           <h2 className="text-4xl md:text-5xl font-light tracking-tight">
             Turn up efficiency.<br />Don't turn down comfort.
@@ -288,7 +322,7 @@ export function LandingPage({ onSelect }: LandingPageProps) {
 
       {/* How it Works */}
       <section className="py-16 px-6">
-        <div className="max-w-7xl mx-auto bg-[#0A3229] rounded-[3rem] p-12 md:p-20 text-white relative overflow-hidden">
+        <div className="max-w-7xl mx-auto bg-[#0B2E28] rounded-[3rem] p-12 md:p-20 text-white relative overflow-hidden">
           <div className="absolute top-8 right-8">
             <Link to="/search" className="inline-flex items-center gap-2 bg-accent text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-accent-dark transition-colors">
               Find out more
@@ -300,7 +334,7 @@ export function LandingPage({ onSelect }: LandingPageProps) {
             {/* Step 1 */}
             <div className="text-center space-y-6">
               <div className="h-48 flex items-center justify-center">
-                <img src="https://images.pexels.com/photos/36922547/pexels-photo-36922547.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Step 1" className="h-full object-contain" referrerPolicy="no-referrer" />
+                <img src="https://images.pexels.com/photos/37040460/pexels-photo-37040460.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Step 1" className="h-full object-contain" referrerPolicy="no-referrer" />
               </div>
               <div>
                 <h3 className="text-accent text-xl font-medium mb-4">Step 1.</h3>
@@ -314,7 +348,7 @@ export function LandingPage({ onSelect }: LandingPageProps) {
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 hidden md:block text-white/30">
                   <ArrowRight className="w-8 h-8" />
                 </div>
-                <img src="https://images.pexels.com/photos/36922548/pexels-photo-36922548.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Step 2" className="h-full object-contain" referrerPolicy="no-referrer" />
+                <img src="https://images.pexels.com/photos/37040458/pexels-photo-37040458.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Step 2" className="h-full object-contain" referrerPolicy="no-referrer" />
               </div>
               <div>
                 <h3 className="text-accent text-xl font-medium mb-4">Step 2.</h3>
@@ -328,7 +362,7 @@ export function LandingPage({ onSelect }: LandingPageProps) {
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 hidden md:block text-white/30">
                   <ArrowRight className="w-8 h-8" />
                 </div>
-                <img src="https://images.pexels.com/photos/36922546/pexels-photo-36922546.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Step 3" className="h-full object-contain" referrerPolicy="no-referrer" />
+                <img src="https://images.pexels.com/photos/37040459/pexels-photo-37040459.png?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2" alt="Step 3" className="h-full object-contain" referrerPolicy="no-referrer" />
               </div>
               <div>
                 <h3 className="text-accent text-xl font-medium mb-4">Step 3.</h3>
@@ -428,9 +462,8 @@ export function LandingPage({ onSelect }: LandingPageProps) {
           
           <div className="bg-white text-primary rounded-[2rem] overflow-hidden flex flex-col">
             <div className="p-8 flex-1">
-              <div className="text-xs font-bold tracking-widest uppercase text-accent mb-4">December 8, 2025</div>
-              <h3 className="text-xl font-medium mb-4">Best Chicago Project Under 100MW at the 2025 Energy Storage Awards</h3>
-              <Link to="/blog" className="text-sm font-medium hover:text-accent transition-colors underline decoration-black/20 underline-offset-4">View post</Link>
+              <h3 className="text-xl font-medium mb-4">How Your Building Is Losing Money Without You Knowing</h3>
+              <a href="https://medium.com/@zecci77/here-is-a-cleaner-medium-style-version-of-your-article-with-a-more-professional-tone-and-no-792fc8751c26" target="_blank" rel="noopener noreferrer" className="text-sm font-medium hover:text-accent transition-colors underline decoration-black/20 underline-offset-4">View post</a>
             </div>
             <div className="h-48 bg-black/5">
               <img src="https://images.unsplash.com/photo-1524168272322-bf73616d9cb5?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="News" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
@@ -439,9 +472,8 @@ export function LandingPage({ onSelect }: LandingPageProps) {
 
           <div className="bg-white text-primary rounded-[2rem] overflow-hidden flex flex-col">
             <div className="p-8 flex-1">
-              <div className="text-xs font-bold tracking-widest uppercase text-accent mb-4">October 17, 2025</div>
-              <h3 className="text-xl font-medium mb-4">Civic Energy named to Cleantech Group's 2025 "50 to Watch"</h3>
-              <Link to="/blog" className="text-sm font-medium hover:text-accent transition-colors underline decoration-black/20 underline-offset-4">View post</Link>
+              <h3 className="text-xl font-medium mb-4">Built for Chicago, Built for Its People</h3>
+              <a href="https://medium.com/@zecci77/why-we-named-it-civic-energy-built-for-chicago-built-for-its-people-a21c27b929c9" target="_blank" rel="noopener noreferrer" className="text-sm font-medium hover:text-accent transition-colors underline decoration-black/20 underline-offset-4">View post</a>
             </div>
             <div className="h-48 bg-black/5">
               <img src="https://images.unsplash.com/photo-1643151663724-ab51858d5fe1?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="News" className="w-full h-full object-cover" referrerPolicy="no-referrer" />

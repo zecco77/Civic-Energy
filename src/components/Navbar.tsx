@@ -21,7 +21,6 @@ export function Navbar() {
   const isActive = (path: string) => location.pathname === path;
 
   const navLinks = [
-    { name: 'Search', path: '/search' },
     { name: 'Platform', path: '/platform' },
     { name: 'Features', path: '/features' },
     { name: 'Contractors', path: '/contractors' },
