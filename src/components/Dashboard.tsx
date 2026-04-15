@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ArrowLeft, TrendingDown, Zap, AlertTriangle, CheckCircle2, Lock, ArrowRight, DollarSign, Activity, Settings, Wrench, BarChart3, Cloud, Building2, Star, Calendar, FileText, Download, LockOpen, X, Plus, ShieldCheck, Clock } from 'lucide-react';
+import { ArrowLeft, TrendingDown, Zap, AlertTriangle, CheckCircle2, Lock, ArrowRight, DollarSign, Activity, Settings, Wrench, BarChart3, Cloud, Building2, Star, Calendar, FileText, Download, LockOpen, X, Plus, ShieldCheck, Clock, Info, Sparkles, Brain, Target, Lightbulb } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, LineChart, Line, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 import { BenchmarkingData } from '../services/chicagoData';
 import { calculateFinancials, formatCurrency } from '../services/financials';
@@ -19,9 +19,26 @@ interface DashboardProps {
   onBack: () => void;
 }
 
+const MetricTooltip = ({ title, tooltip, titleClassName = "text-sm text-primary/60 font-medium", align = "center", className = "mb-1" }: { title: string, tooltip: string, titleClassName?: string, align?: "left" | "center" | "right", className?: string }) => (
+  <div className={cn("group relative inline-flex items-center gap-1.5", className)}>
+    <p className={titleClassName}>{title}</p>
+    <Info className="w-3.5 h-3.5 text-primary/40 cursor-help" />
+    <div className={cn(
+      "absolute bottom-full mb-2 w-64 p-3 bg-gray-900 text-white text-xs rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-none font-normal leading-relaxed text-center",
+      align === "center" ? "left-1/2 -translate-x-1/2" : align === "left" ? "left-0" : "right-0"
+    )}>
+      {tooltip}
+      <div className={cn(
+        "absolute top-full border-4 border-transparent border-t-gray-900",
+        align === "center" ? "left-1/2 -translate-x-1/2" : align === "left" ? "left-4" : "right-4"
+      )}></div>
+    </div>
+  </div>
+);
+
 export function Dashboard({ building, onBack }: DashboardProps) {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'loss' | 'diagnostics' | 'decisions' | 'contractors' | 'tracking' | 'map' | 'bills'>('loss');
+  const [activeTab, setActiveTab] = useState<'loss' | 'diagnostics' | 'decisions' | 'contractors' | 'tracking' | 'map' | 'bills' | 'ai'>('loss');
   const [activeContractorCategory, setActiveContractorCategory] = useState('All');
   const [acceptedBid, setAcceptedBid] = useState<number | null>(null);
   const [expandedBid, setExpandedBid] = useState<number | null>(null);
@@ -432,6 +449,13 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                 >
                   Neighbour Comparison
                 </button>
+                <button 
+                  onClick={() => setActiveTab('ai')}
+                  className={cn("px-4 py-1.5 text-sm font-medium rounded-full transition-all whitespace-nowrap flex items-center gap-1.5", activeTab === 'ai' ? "bg-white text-primary shadow-[0_1px_3px_rgba(0,0,0,0.1)]" : "text-primary/60 hover:text-primary")}
+                >
+                  <Sparkles className="w-4 h-4 text-blue-500" />
+                  AI Summary
+                </button>
               </div>
             </div>
           </div>
@@ -452,6 +476,103 @@ export function Dashboard({ building, onBack }: DashboardProps) {
             </motion.div>
           )}
 
+          {activeTab === 'ai' && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-6"
+            >
+              <div className="bg-white rounded-3xl p-8 shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-black/5 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+                  <Sparkles className="w-64 h-64" />
+                </div>
+                
+                <div className="flex items-center gap-3 mb-6 relative z-10">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center">
+                    <Brain className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-semibold text-primary tracking-tight">AI Executive Summary</h3>
+                    <p className="text-primary/60">A synthesized overview of your building's energy profile and action plan.</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
+                  <div className="lg:col-span-2 space-y-8">
+                    <div className="space-y-4">
+                      <h4 className="text-lg font-semibold text-primary flex items-center gap-2">
+                        <AlertTriangle className="w-5 h-5 text-rose-500" />
+                        The Problem: Significant Energy Waste
+                      </h4>
+                      <p className="text-primary/80 leading-relaxed">
+                        Your building is currently losing an estimated <span className="font-semibold text-rose-600">{formatValue(financials.estimatedWastedEnergy)}</span> annually due to inefficiencies. 
+                        With an ENERGY STAR score of <span className="font-semibold">{building.energy_star_score || 'N/A'}</span>, it performs in the bottom half of similar properties in Chicago. 
+                        The primary culprits are likely aging HVAC systems, poor envelope insulation, and outdated lighting.
+                      </p>
+                    </div>
+
+                    <div className="space-y-4">
+                      <h4 className="text-lg font-semibold text-primary flex items-center gap-2">
+                        <Target className="w-5 h-5 text-blue-500" />
+                        The Solution: Targeted Retrofits
+                      </h4>
+                      <p className="text-primary/80 leading-relaxed">
+                        By implementing the recommended action plan—starting with LED retrofits and HVAC optimization—you can eliminate up to <span className="font-semibold text-blue-600">{financials.savingsPotentialPercentage.toFixed(1)}%</span> of your energy waste. 
+                        These upgrades are not just expenses; they are investments that will increase your Net Operating Income (NOI) by an estimated <span className="font-semibold text-emerald-600">{formatValue(financials.increasedNOI)}</span> per year.
+                      </p>
+                    </div>
+
+                    <div className="space-y-4">
+                      <h4 className="text-lg font-semibold text-primary flex items-center gap-2">
+                        <Lightbulb className="w-5 h-5 text-amber-500" />
+                        The Impact: Value Creation
+                      </h4>
+                      <p className="text-primary/80 leading-relaxed">
+                        Beyond immediate utility savings, these improvements will boost your building's overall asset value by approximately <span className="font-semibold text-primary">{formatValue(financials.increasedBuildingValue)}</span>. 
+                        Furthermore, you will reduce your carbon footprint by <span className="font-semibold">{building.total_ghg_emissions_metric_tons_co2e ? (Number(building.total_ghg_emissions_metric_tons_co2e) * 0.2).toFixed(1) : 'N/A'} tons</span> annually, aligning with Chicago's sustainability goals and avoiding potential future emissions penalties.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="bg-bg rounded-2xl p-6 space-y-6">
+                    <h4 className="font-semibold text-primary border-b border-black/5 pb-4">Key Takeaways</h4>
+                    
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-xs text-primary/60 uppercase font-bold mb-1">Total Savings Potential</p>
+                        <p className="text-2xl font-bold text-emerald-600">{formatValue(financials.savingsPotential)} <span className="text-sm font-normal text-emerald-600/70">/ yr</span></p>
+                      </div>
+                      
+                      <div>
+                        <p className="text-xs text-primary/60 uppercase font-bold mb-1">Estimated ROI</p>
+                        <p className="text-2xl font-bold text-blue-600">22% - 35%</p>
+                      </div>
+                      
+                      <div>
+                        <p className="text-xs text-primary/60 uppercase font-bold mb-1">Payback Period</p>
+                        <p className="text-2xl font-bold text-primary">2.5 - 4.5 <span className="text-sm font-normal text-primary/60">Years</span></p>
+                      </div>
+
+                      <div>
+                        <p className="text-xs text-primary/60 uppercase font-bold mb-1">Available Incentives</p>
+                        <p className="text-2xl font-bold text-amber-600">{formatValue(financials.estimatedTaxDeduction)}</p>
+                        <p className="text-xs text-amber-700/70 mt-1">179D + Utility Rebates</p>
+                      </div>
+                    </div>
+
+                    <button 
+                      onClick={() => setActiveTab('decisions')}
+                      className="w-full bg-primary text-white py-3 rounded-xl font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 mt-4"
+                    >
+                      View Action Plan
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {activeTab === 'loss' && (
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -460,7 +581,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
             >
               <div className="md:col-span-2 space-y-6">
                 {/* Primary Loss Card */}
-                <div className="bg-white rounded-3xl p-8 shadow-[0_2px_10px_rgba(0,0,0,0.04)] relative overflow-hidden flex flex-col lg:flex-row gap-8">
+                <div className="bg-white rounded-3xl p-8 shadow-[0_2px_10px_rgba(0,0,0,0.04)] relative flex flex-col lg:flex-row gap-8">
                   <div className="flex-1 relative z-10">
                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-500/10 text-rose-600 rounded-full text-sm font-medium mb-6">
                       <AlertTriangle className="w-4 h-4" />
@@ -475,15 +596,15 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
                       <div className="bg-bg rounded-2xl p-4">
-                        <p className="text-sm text-primary/60 font-medium mb-1">Daily Bleed</p>
+                        <MetricTooltip title="Daily Bleed" tooltip="The estimated amount of money lost every single day due to building inefficiencies and wasted energy." align="left" />
                         <p className="text-2xl font-semibold text-primary">{formatValue(financials.dailyLoss)}</p>
                       </div>
                       <div className="bg-bg rounded-2xl p-4">
-                        <p className="text-sm text-primary/60 font-medium mb-1">Savings Potential</p>
+                        <MetricTooltip title="Savings Potential" tooltip="The total estimated annual savings achievable by implementing recommended energy efficiency upgrades." />
                         <p className="text-2xl font-semibold text-primary">{formatValue(financials.savingsPotential)}</p>
                       </div>
                       <div className="bg-bg rounded-2xl p-4 col-span-2 md:col-span-1">
-                        <p className="text-sm text-primary/60 font-medium mb-1">Potential Reduction</p>
+                        <MetricTooltip title="Potential Reduction" tooltip="The percentage of your total energy costs that could be eliminated through efficiency improvements." align="right" />
                         <p className="text-2xl font-semibold text-primary">{financials.savingsPotentialPercentage.toFixed(1)}%</p>
                       </div>
                     </div>
@@ -492,12 +613,12 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                       <h4 className="text-lg font-semibold text-primary mb-4">Financial Impact of Upgrades</h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="bg-emerald-50 rounded-2xl p-4 border border-emerald-100">
-                          <p className="text-sm text-emerald-800 font-medium mb-1">Increased NOI</p>
+                          <MetricTooltip title="Increased NOI" tooltip="Net Operating Income increase resulting directly from reduced annual operating expenses (energy savings)." align="left" />
                           <p className="text-2xl font-semibold text-emerald-600">+{formatValue(financials.increasedNOI)}</p>
                           <p className="text-xs text-emerald-700/70 mt-1">Directly from energy savings</p>
                         </div>
                         <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100">
-                          <p className="text-sm text-blue-800 font-medium mb-1">Building Value Increase</p>
+                          <MetricTooltip title="Building Value Increase" tooltip="The estimated increase in the building's asset value, calculated by dividing the Increased NOI by the local capitalization rate." align="right" />
                           <p className="text-2xl font-semibold text-blue-600">+{formatValue(financials.increasedBuildingValue)}</p>
                           <p className="text-xs text-blue-700/70 mt-1">Based on {financials.capRate * 100}% cap rate</p>
                         </div>
@@ -528,28 +649,28 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     <div className="bg-bg rounded-2xl p-4">
                       <div className="flex items-center gap-2 mb-2">
                         <DollarSign className="w-4 h-4 text-primary" />
-                        <p className="text-xs text-primary/60 font-medium">Cost Intensity</p>
+                        <MetricTooltip title="Cost Intensity" tooltip="Annual energy cost per square foot of building space." titleClassName="text-xs text-primary/60 font-medium" align="left" className="mb-0" />
                       </div>
                       <p className="text-xl font-semibold text-primary tracking-tight">{formatValue(financials.costPerSqFt)} <span className="text-xs font-normal text-primary/50">/sqft</span></p>
                     </div>
                     <div className="bg-bg rounded-2xl p-4">
                       <div className="flex items-center gap-2 mb-2">
                         <Zap className="w-4 h-4 text-amber-500" />
-                        <p className="text-xs text-primary/60 font-medium">Site EUI</p>
+                        <MetricTooltip title="Site EUI" tooltip="Site Energy Use Intensity (EUI) measures the amount of energy consumed per square foot per year." titleClassName="text-xs text-primary/60 font-medium" align="center" className="mb-0" />
                       </div>
                       <p className="text-xl font-semibold text-primary tracking-tight">{building.site_eui_kbtu_sq_ft || 'N/A'} <span className="text-xs font-normal text-primary/50">kBtu/sqft</span></p>
                     </div>
                     <div className="bg-bg rounded-2xl p-4">
                       <div className="flex items-center gap-2 mb-2">
                         <Cloud className="w-4 h-4 text-primary/40" />
-                        <p className="text-xs text-primary/60 font-medium">GHG Emissions</p>
+                        <MetricTooltip title="GHG Emissions" tooltip="Total Greenhouse Gas Emissions in Metric Tons of CO2 equivalent per year." titleClassName="text-xs text-primary/60 font-medium" align="center" className="mb-0" />
                       </div>
                       <p className="text-xl font-semibold text-primary tracking-tight">{building.total_ghg_emissions_metric_tons_co2e ? Number(building.total_ghg_emissions_metric_tons_co2e).toLocaleString() : 'N/A'} <span className="text-xs font-normal text-primary/50">MTCO2e</span></p>
                     </div>
                     <div className="bg-bg rounded-2xl p-4 border border-primary/20">
                       <div className="flex items-center gap-2 mb-2">
                         <Star className="w-4 h-4 text-primary" />
-                        <p className="text-xs text-primary/60 font-medium">179D Tax Deduction</p>
+                        <MetricTooltip title="179D Tax Deduction" tooltip="Estimated federal tax deduction available for energy-efficient commercial building property." titleClassName="text-xs text-primary/60 font-medium" align="right" className="mb-0" />
                       </div>
                       <p className="text-xl font-semibold text-primary tracking-tight">{formatValue(financials.estimatedTaxDeduction)}</p>
                       <p className="text-[10px] text-primary/40 mt-1">Estimated IRA Federal Credit</p>
@@ -586,7 +707,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
               <div className="space-y-6">
                 <div className="bg-white rounded-3xl p-6 shadow-[0_2px_10px_rgba(0,0,0,0.04)]">
                   <div className="flex items-center justify-between mb-4">
-                    <h4 className="font-medium text-primary/70">Total Energy Spend</h4>
+                    <MetricTooltip title="Total Energy Spend" tooltip="The estimated total annual cost of electricity and natural gas for this building." />
                     <DollarSign className="w-5 h-5 text-primary/40" />
                   </div>
                   <p className="text-3xl font-semibold text-primary tracking-tight">{formatValue(financials.totalAnnualCost)}</p>
@@ -649,11 +770,13 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   </div>
                 </div>
 
-                <div className="bg-white rounded-3xl p-6 text-primary shadow-sm border border-black/5 relative overflow-hidden">
-                  <div className="absolute -right-4 -bottom-4 opacity-[0.03]">
-                    <BarChart3 className="w-32 h-32" />
+                <div className="bg-white rounded-3xl p-6 text-primary shadow-sm border border-black/5 relative">
+                  <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
+                    <div className="absolute -right-4 -bottom-4 opacity-[0.03]">
+                      <BarChart3 className="w-32 h-32" />
+                    </div>
                   </div>
-                  <h4 className="font-medium text-primary/70 mb-2 relative z-10">Peer Comparison</h4>
+                  <MetricTooltip title="Peer Comparison" tooltip="Your building's ENERGY STAR score compared to similar properties. A score of 50 is the national median." align="left" />
                   <div className="flex items-baseline gap-2 relative z-10">
                     <span className="text-4xl font-semibold tracking-tight">{building.energy_star_score || 'N/A'}</span>
                     <span className="text-primary/50">/ 100</span>
@@ -734,6 +857,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     dollarImpact={financials.diagnostics.hvac}
                     icon={<Settings className="w-6 h-6 text-orange-500" />}
                     formatValue={formatValue}
+                    tooltip="Heating, Ventilation, and Air Conditioning systems degrade over time. Upgrading or tuning these systems can drastically reduce energy consumption."
                   />
                   <DiagnosticCard 
                     title="Envelope & Insulation Gaps"
@@ -742,6 +866,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     dollarImpact={financials.diagnostics.envelope}
                     icon={<Activity className="w-6 h-6 text-blue-500" />}
                     formatValue={formatValue}
+                    tooltip="The building envelope includes walls, windows, and roofs. Poor insulation allows heated or cooled air to escape, forcing HVAC systems to work harder."
                   />
                   <DiagnosticCard 
                     title="Lighting Inefficiency"
@@ -750,6 +875,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     dollarImpact={financials.diagnostics.lighting}
                     icon={<Zap className="w-6 h-6 text-yellow-500" />}
                     formatValue={formatValue}
+                    tooltip="Outdated lighting technologies (like fluorescent or incandescent) consume significantly more electricity than modern LED fixtures."
                   />
                   <DiagnosticCard 
                     title="Peak Demand Charges"
@@ -758,6 +884,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     dollarImpact={financials.diagnostics.peakDemand}
                     icon={<TrendingDown className="w-6 h-6 text-rose-500" />}
                     formatValue={formatValue}
+                    tooltip="Utility companies charge extra when your building draws a large amount of power at once. Smoothing out this usage avoids expensive penalties."
                   />
                   <DiagnosticCard 
                     title="Plug Load & Equipment Waste"
@@ -766,6 +893,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     dollarImpact={financials.diagnostics.plugLoad}
                     icon={<Wrench className="w-6 h-6 text-primary/60" />}
                     formatValue={formatValue}
+                    tooltip="Energy consumed by devices plugged into standard outlets, even when not actively in use (phantom power)."
                   />
                 </div>
               </div>
@@ -814,6 +942,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     isSelected={selectedActions.includes(0)}
                     onToggle={() => toggleAction(0)}
                     formatValue={formatValue}
+                    tooltip="LEDs use up to 75% less energy and last 25x longer than incandescent lighting. Smart controls ensure lights are only on when spaces are occupied."
                   />
                 </div>
                 <ActionCard 
@@ -827,6 +956,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   isSelected={selectedActions.includes(1)}
                   onToggle={() => toggleAction(1)}
                   formatValue={formatValue}
+                  tooltip="Optimizing RTUs allows fans and compressors to run at partial speeds, matching actual demand rather than running at 100% all the time."
                 />
                 <ActionCard 
                   title="Building Envelope Sealing & Insulation"
@@ -839,6 +969,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   isSelected={selectedActions.includes(2)}
                   onToggle={() => toggleAction(2)}
                   formatValue={formatValue}
+                  tooltip="Sealing gaps and improving insulation prevents conditioned air from escaping, significantly reducing the workload on heating and cooling systems."
                 />
                 <ActionCard 
                   title="Building Automation System (BAS) Upgrade"
@@ -851,6 +982,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   isSelected={selectedActions.includes(3)}
                   onToggle={() => toggleAction(3)}
                   formatValue={formatValue}
+                  tooltip="A BAS acts as the 'brain' of the building, automatically adjusting systems based on occupancy, weather, and time of day to eliminate waste."
                 />
                 <ActionCard 
                   title="High-Efficiency Boiler Replacement"
@@ -863,6 +995,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   isSelected={selectedActions.includes(4)}
                   onToggle={() => toggleAction(4)}
                   formatValue={formatValue}
+                  tooltip="Condensing boilers capture heat from exhaust gases that would normally be vented outside, making them highly efficient."
                 />
                 <ActionCard 
                   title="Variable Frequency Drives (VFDs)"
@@ -875,6 +1008,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   isSelected={selectedActions.includes(5)}
                   onToggle={() => toggleAction(5)}
                   formatValue={formatValue}
+                  tooltip="VFDs allow motors to run at slower speeds when full power isn't needed, drastically reducing electricity consumption."
                 />
                 <ActionCard 
                   title="Commercial Solar PV Installation"
@@ -887,6 +1021,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   isSelected={selectedActions.includes(6)}
                   onToggle={() => toggleAction(6)}
                   formatValue={formatValue}
+                  tooltip="Solar panels generate free electricity from the sun, reducing your reliance on the grid and lowering utility bills."
                 />
                 <ActionCard 
                   title="Domestic Hot Water (DHW) Electrification"
@@ -899,6 +1034,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   isSelected={selectedActions.includes(7)}
                   onToggle={() => toggleAction(7)}
                   formatValue={formatValue}
+                  tooltip="Heat pump water heaters use electricity to move heat from the air to the water, making them 2-3 times more efficient than conventional electric resistance water heaters."
                 />
               </div>
             </motion.div>
@@ -1103,7 +1239,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                       <DollarSign className="w-5 h-5 text-primary" />
                     </div>
-                    <h3 className="font-medium text-primary">Projected Annual Savings</h3>
+                    <MetricTooltip title="Projected Annual Savings" tooltip="The estimated total amount of money you will save each year after completing the selected upgrades." titleClassName="font-medium text-primary" align="left" />
                   </div>
                   <div className="text-3xl font-semibold text-primary tracking-tight mb-2">
                     {formatValue(selectedSavings)}
@@ -1119,7 +1255,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center">
                       <Zap className="w-5 h-5 text-blue-600" />
                     </div>
-                    <h3 className="font-medium text-primary">Projected Energy Usage</h3>
+                    <MetricTooltip title="Projected Energy Usage" tooltip="Your building's estimated new total energy consumption (in Megawatt-hours) after efficiency improvements." titleClassName="font-medium text-primary" align="center" />
                   </div>
                   <div className="text-3xl font-semibold text-primary tracking-tight mb-2">
                     {Math.round((financials.electricityCost - (selectedSavings * 0.7)) / 0.095 / 1000)} <span className="text-lg text-primary/40 font-normal">MWh</span>
@@ -1135,7 +1271,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
                       <BarChart3 className="w-5 h-5 text-purple-600" />
                     </div>
-                    <h3 className="font-medium text-primary">ENERGY STAR</h3>
+                    <MetricTooltip title="Projected ENERGY STAR" tooltip="Your estimated new ENERGY STAR score after upgrades. A higher score increases building value and marketability." titleClassName="font-medium text-primary" align="right" />
                   </div>
                   <div className="text-3xl font-semibold text-primary tracking-tight mb-2">
                     {building.energy_star_score || 'N/A'} <span className="text-lg text-primary/40 font-normal">/ 100</span>
@@ -1358,7 +1494,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
   );
 }
 
-function DiagnosticCard({ title, description, impact, dollarImpact, icon, formatValue }: { title: string, description: string, impact: string, dollarImpact?: number, icon: React.ReactNode, formatValue?: (value: number) => string }) {
+function DiagnosticCard({ title, description, impact, dollarImpact, icon, formatValue, tooltip }: { title: string, description: string, impact: string, dollarImpact?: number, icon: React.ReactNode, formatValue?: (value: number) => string, tooltip?: string }) {
   return (
     <div className="p-6 rounded-3xl bg-bg hover:bg-white hover:shadow-[0_2px_10px_rgba(0,0,0,0.04)] transition-all">
       <div className="flex items-start gap-4">
@@ -1367,7 +1503,18 @@ function DiagnosticCard({ title, description, impact, dollarImpact, icon, format
         </div>
         <div className="flex-1">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="font-medium text-primary">{title}</h4>
+            <div className="flex items-center gap-2">
+              <h4 className="font-medium text-primary">{title}</h4>
+              {tooltip && (
+                <div className="group relative inline-flex items-center">
+                  <Info className="w-3.5 h-3.5 text-primary/40 cursor-help" />
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-gray-900 text-white text-xs rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-none font-normal leading-relaxed text-center">
+                    {tooltip}
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                  </div>
+                </div>
+              )}
+            </div>
             <span className={cn(
               "text-xs font-medium px-2 py-1 rounded-full",
               impact === 'High' ? "bg-rose-500/10 text-rose-600" : impact === 'Medium' ? "bg-amber-500/10 text-amber-600" : "bg-blue-500/10 text-blue-600"
@@ -1388,7 +1535,7 @@ function DiagnosticCard({ title, description, impact, dollarImpact, icon, format
   );
 }
 
-export function ActionCard({ title, description, savings, cost, paybackMonths, roi, incentives, isSelected, onToggle, formatValue }: any) {
+export function ActionCard({ title, description, savings, cost, paybackMonths, roi, incentives, isSelected, onToggle, formatValue, tooltip }: any) {
   return (
     <div 
       onClick={onToggle}
@@ -1407,7 +1554,18 @@ export function ActionCard({ title, description, savings, cost, paybackMonths, r
               {isSelected && <CheckCircle2 className="w-4 h-4 text-white" />}
             </div>
             <div>
-              <h4 className="text-xl font-semibold text-primary tracking-tight group-hover:text-primary transition-colors">{title}</h4>
+              <div className="flex items-center gap-2">
+                <h4 className="text-xl font-semibold text-primary tracking-tight group-hover:text-primary transition-colors">{title}</h4>
+                {tooltip && (
+                  <div className="group/tooltip relative inline-flex items-center">
+                    <Info className="w-4 h-4 text-primary/40 cursor-help" />
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 p-3 bg-gray-900 text-white text-xs rounded-xl shadow-xl opacity-0 invisible group-hover/tooltip:opacity-100 group-hover/tooltip:visible transition-all z-50 pointer-events-none font-normal leading-relaxed text-center">
+                      {tooltip}
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                    </div>
+                  </div>
+                )}
+              </div>
               <p className="text-primary/60 mt-1">{description}</p>
             </div>
           </div>

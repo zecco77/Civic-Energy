@@ -22,6 +22,23 @@ import { BenchmarkingData, getChicagoBuildingDetails, getCookCountyProperty, get
 import { calculateFinancials, formatCurrency } from '../services/financials';
 import { NeighborhoodMap } from './NeighborhoodMap';
 import { cn } from '../lib/utils';
+
+const MetricTooltip = ({ title, tooltip, titleClassName = "text-[10px] text-primary/40 uppercase font-bold mb-1", align = "center" }: { title: string, tooltip: string, titleClassName?: string, align?: "left" | "center" | "right" }) => (
+  <div className="group relative inline-flex items-center gap-1.5 mb-1">
+    <p className={titleClassName}>{title}</p>
+    <Info className="w-3 h-3 text-primary/40 cursor-help" />
+    <div className={cn(
+      "absolute bottom-full mb-2 w-64 p-3 bg-gray-900 text-white text-xs rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-none font-normal leading-relaxed text-center normal-case tracking-normal",
+      align === "center" ? "left-1/2 -translate-x-1/2" : align === "left" ? "left-0" : "right-0"
+    )}>
+      {tooltip}
+      <div className={cn(
+        "absolute top-full border-4 border-transparent border-t-gray-900",
+        align === "center" ? "left-1/2 -translate-x-1/2" : align === "left" ? "left-4" : "right-4"
+      )}></div>
+    </div>
+  </div>
+);
 import { getWeatherData, WeatherData } from '../services/weatherService';
 import { auth } from '../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -215,23 +232,23 @@ export function BuildingExplorer({ building, onClose, onReviewReport, formatValu
 
             <div className="grid grid-cols-2 gap-3">
               <div className="bg-bg p-4 rounded-2xl">
-                <p className="text-[10px] text-primary/40 uppercase font-bold mb-1">Building Energy Score</p>
+                <MetricTooltip title="Building Energy Score" tooltip="ENERGY STAR score comparing this building's energy performance to similar buildings nationwide." align="left" />
                 <p className="text-xl font-bold text-primary">
                   {building.energy_star_score || 'N/A'} <span className="text-xs font-normal text-primary/40">/ 100</span>
                 </p>
               </div>
               <div className="bg-bg p-4 rounded-2xl">
-                <p className="text-[10px] text-primary/40 uppercase font-bold mb-1">Carbon Reduction</p>
+                <MetricTooltip title="Carbon Reduction" tooltip="Estimated annual reduction in greenhouse gas emissions if recommended efficiency upgrades are implemented." align="right" />
                 <p className="text-xl font-bold text-primary">
                   {building.total_ghg_emissions_metric_tons_co2e ? (Number(building.total_ghg_emissions_metric_tons_co2e) * 0.2).toFixed(1) : '450.4'} <span className="text-xs font-normal text-primary/40">tons/yr</span>
                 </p>
               </div>
               <div className="bg-bg p-4 rounded-2xl border border-rose-500/10">
-                <p className="text-[10px] text-rose-500 uppercase font-bold mb-1">Annual Cooling Cost</p>
+                <MetricTooltip title="Annual Cooling Cost" tooltip="Estimated yearly cost to cool the building, primarily driven by electricity usage during summer months." titleClassName="text-[10px] text-rose-500 uppercase font-bold mb-1" align="left" />
                 <p className="text-xl font-bold text-rose-600">{formatValue ? formatValue(financials.estimatedCoolingCost) : formatCurrency(financials.estimatedCoolingCost)}</p>
               </div>
               <div className="bg-primary/10 p-4 rounded-2xl border border-primary/10">
-                <p className="text-[10px] text-primary uppercase font-bold mb-1">AI Optimization Opp.</p>
+                <MetricTooltip title="AI Optimization Opp." tooltip="Potential savings identified by our AI models through operational tuning and automated controls." titleClassName="text-[10px] text-primary uppercase font-bold mb-1" align="right" />
                 <p className="text-xl font-bold text-primary">{formatValue ? formatValue(financials.savingsPotential * 0.4) : formatCurrency(financials.savingsPotential * 0.4)}</p>
               </div>
             </div>
