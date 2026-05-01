@@ -19,7 +19,7 @@ interface DashboardProps {
   onBack: () => void;
 }
 
-const MetricTooltip = ({ title, tooltip, titleClassName = "text-sm text-primary/60 font-medium", align = "center", className = "mb-1" }: { title: string, tooltip: string, titleClassName?: string, align?: "left" | "center" | "right", className?: string }) => (
+export const MetricTooltip = ({ title, tooltip, titleClassName = "text-sm text-primary/60 font-medium", align = "center", className = "mb-1" }: { title: string, tooltip: string, titleClassName?: string, align?: "left" | "center" | "right", className?: string }) => (
   <div className={cn("group relative inline-flex items-center gap-1.5", className)}>
     <p className={titleClassName}>{title}</p>
     <Info className="w-3.5 h-3.5 text-primary/40 cursor-help" />
@@ -52,7 +52,16 @@ export function Dashboard({ building, onBack }: DashboardProps) {
   const [portfolioDocId, setPortfolioDocId] = useState<string | null>(null);
   const [isTracking, setIsTracking] = useState(false);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
-  const [refinedFinancials, setRefinedFinancials] = useState<any>(null);
+  const [refinedFinancials, setRefinedFinancials] = useState<any>(() => {
+    const saved = localStorage.getItem(`refined_${building.id}`);
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  useEffect(() => {
+    if (refinedFinancials) {
+      localStorage.setItem(`refined_${building.id}`, JSON.stringify(refinedFinancials));
+    }
+  }, [refinedFinancials, building.id]);
 
   const baseFinancials = calculateFinancials(building);
   const financials = refinedFinancials || baseFinancials;
@@ -321,6 +330,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
           <BillUpload 
             currentFinancials={baseFinancials}
             onRefinedData={(data) => setRefinedFinancials(data)}
+            buildingId={building.id}
           />
         </main>
       </div>
@@ -397,11 +407,6 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                     Data Confidence: {confidenceScore}
                   </div>
                 </div>
-                <p className="text-primary/60 mt-1">
-                  {confidenceScore === 'High' 
-                    ? "Powered by Chicago Benchmarking, EIA, NREL, NOAA, OpenStreetMap, Census & Green Button APIs"
-                    : "Based on Chicago Benchmarking Data & ComEd/Peoples Gas Rates"}
-                </p>
               </div>
               <button 
                 onClick={() => setIsBillUploadPageOpen(true)}
@@ -579,6 +584,28 @@ export function Dashboard({ building, onBack }: DashboardProps) {
               animate={{ opacity: 1, y: 0 }}
               className="grid grid-cols-1 md:grid-cols-3 gap-6"
             >
+              {refinedFinancials && (
+                <div className="md:col-span-3 bg-gradient-to-r from-emerald-50 to-green-50/30 border border-emerald-100 rounded-2xl p-4 flex items-start sm:items-center justify-between gap-4 shadow-sm relative overflow-hidden">
+                  <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                    <ShieldCheck className="w-24 h-24" />
+                  </div>
+                  <div className="flex items-center gap-3 relative z-10">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-100/50 flex items-center justify-center shrink-0">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-emerald-800 tracking-tight">Impact Analysis Refined</h4>
+                      <p className="text-sm text-emerald-700/80 mt-0.5">Financial projections are now based on actual utility bill data.</p>
+                    </div>
+                  </div>
+                  <div className="relative z-10 hidden sm:block">
+                    <span className="inline-flex py-1 px-3 bg-white/60 border border-emerald-100 rounded-full text-xs font-semibold text-emerald-700 mx-2">
+                       {refinedFinancials.confidenceScore} Confidence
+                    </span>
+                  </div>
+                </div>
+              )}
+              
               <div className="md:col-span-2 space-y-6">
                 {/* Primary Loss Card */}
                 <div className="bg-white rounded-3xl p-8 shadow-[0_2px_10px_rgba(0,0,0,0.04)] relative flex flex-col lg:flex-row gap-8">
@@ -624,23 +651,6 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                         </div>
                       </div>
                     </div>
-                  </div>
-
-                  <div className="lg:w-1/3 relative z-10 min-h-[300px] lg:min-h-0">
-                    {building.latitude && building.longitude ? (
-                      <iframe 
-                        src={`https://maps.google.com/maps?q=${building.latitude},${building.longitude}&z=16&output=embed`}
-                        className="w-full h-full object-cover rounded-2xl shadow-lg border-0"
-                        allowFullScreen
-                        loading="lazy"
-                        referrerPolicy="no-referrer-when-downgrade"
-                        title="Building Location"
-                      ></iframe>
-                    ) : (
-                      <div className="w-full h-full bg-black/5 rounded-2xl flex items-center justify-center text-primary/40">
-                        Location not available
-                      </div>
-                    )}
                   </div>
                 </div>
 
