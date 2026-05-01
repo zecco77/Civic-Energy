@@ -42,7 +42,9 @@ export function LoginPage() {
       await signInWithPopup(auth, googleProvider);
       navigate(from);
     } catch (err: any) {
-      setError(err.message || 'Failed to log in with Google');
+      if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+        setError(err.message || 'Failed to log in with Google');
+      }
     } finally {
       setLoading(false);
     }

@@ -73,7 +73,9 @@ export function SignupPage() {
 
       navigate(from);
     } catch (err: any) {
-      setError(err.message || 'Failed to sign up with Google');
+      if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
+        setError(err.message || 'Failed to sign up with Google');
+      }
     } finally {
       setLoading(false);
     }
