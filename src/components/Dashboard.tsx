@@ -76,7 +76,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
     return `${formatCurrency(min)} - ${formatCurrency(max)}`;
   };
 
-  const confidenceScore = refinedFinancials?.confidenceScore || 'Low';
+  const confidenceScore = refinedFinancials?.confidenceScore || 'Medium';
 
   useEffect(() => {
     const checkPortfolio = async (uid: string) => {
@@ -399,9 +399,7 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   <h2 className="text-3xl font-bold tracking-tight text-primary">Financial Snapshot</h2>
                   <div className={cn(
                     "px-2.5 py-1 rounded-full text-xs font-medium flex items-center gap-1", 
-                    confidenceScore === 'High' ? "bg-emerald-100 text-emerald-700" : 
-                    confidenceScore === 'Medium' ? "bg-blue-100 text-blue-700" : 
-                    "bg-amber-100 text-amber-700"
+                    confidenceScore === 'High' ? "bg-emerald-100 text-emerald-700" : "bg-blue-100 text-blue-700"
                   )}>
                     <CheckCircle2 className="w-3 h-3" />
                     Data Confidence: {confidenceScore}
@@ -849,8 +847,8 @@ export function Dashboard({ building, onBack }: DashboardProps) {
                   <div className="shrink-0 bg-bg p-4 rounded-2xl text-center">
                     <p className="text-sm text-primary/60 font-medium mb-1">Data Confidence</p>
                     <div className="flex items-center gap-1 justify-center text-primary mb-2">
-                      <div className={cn("w-2 h-4 rounded-sm", confidenceScore === 'High' || confidenceScore === 'Medium' || confidenceScore === 'Low' ? "bg-primary" : "bg-primary/20")}></div>
-                      <div className={cn("w-2 h-4 rounded-sm", confidenceScore === 'High' || confidenceScore === 'Medium' ? "bg-primary" : "bg-primary/20")}></div>
+                      <div className={cn("w-2 h-4 rounded-sm", "bg-primary")}></div>
+                      <div className={cn("w-2 h-4 rounded-sm", "bg-primary")}></div>
                       <div className={cn("w-2 h-4 rounded-sm", confidenceScore === 'High' ? "bg-primary" : "bg-primary/20")}></div>
                     </div>
                     <p className="text-xs font-bold text-primary uppercase">

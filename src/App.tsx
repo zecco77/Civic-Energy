@@ -59,17 +59,17 @@ function AppContent() {
             selectedBuilding ? (
               <Dashboard building={selectedBuilding} onBack={() => {
                 setSelectedBuilding(null);
-                navigate('/search');
+                navigate('/');
               }} />
             ) : (
               <div className="min-h-screen flex items-center justify-center bg-bg">
                 <div className="text-center">
                   <h2 className="text-2xl font-bold text-primary mb-4">No building selected</h2>
                   <button 
-                    onClick={() => navigate('/search')}
+                    onClick={() => navigate('/')}
                     className="bg-accent hover:bg-accent-dark text-white px-6 py-3 rounded-full font-medium transition-colors shadow-sm"
                   >
-                    Go back to search
+                    Go back to home
                   </button>
                 </div>
               </div>

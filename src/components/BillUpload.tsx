@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { UploadCloud, FileText, CheckCircle2, AlertCircle, Loader2, TrendingUp, DollarSign, Zap, Calendar, Building2, ArrowRight, BarChart3, Database, Pencil, Trash2, X, Check } from 'lucide-react';
+import { UploadCloud, FileText, CheckCircle2, AlertCircle, Loader2, TrendingUp, DollarSign, Zap, Calendar, Building2, ArrowRight, BarChart3, Database, Pencil, Trash2, X, Check, Filter } from 'lucide-react';
 import { motion } from 'motion/react';
 import { formatCurrency } from '../services/financials';
 import { MetricTooltip } from './Dashboard';
@@ -39,6 +39,44 @@ export function BillUpload({ currentFinancials, onRefinedData, buildingId }: Bil
   
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<BillData | null>(null);
+  
+  const [selectedYear, setSelectedYear] = useState<string>('all');
+  const [selectedMonth, setSelectedMonth] = useState<string>('all');
+
+  function getBillDate(period: string): Date {
+    const parts = period.toLowerCase().split(/to|through|-/);
+    const dateStr = parts.length > 1 ? parts[1].trim() : parts[0].trim();
+    const d = new Date(dateStr);
+    return isNaN(d.getTime()) ? new Date() : d;
+  }
+
+  const availableYears = React.useMemo(() => {
+    const years = new Set<string>();
+    historicalBills.forEach(bill => {
+      const d = getBillDate(bill.billingPeriod);
+      if (!isNaN(d.getTime())) {
+        years.add(d.getFullYear().toString());
+      }
+    });
+    return Array.from(years).sort((a, b) => b.localeCompare(a));
+  }, [historicalBills]);
+
+  const filteredBills = React.useMemo(() => {
+    return historicalBills.filter(bill => {
+      if (selectedYear === 'all') return true;
+      
+      const d = getBillDate(bill.billingPeriod);
+      if (isNaN(d.getTime())) return true;
+
+      const yearStr = d.getFullYear().toString();
+      const monthStr = d.getMonth().toString();
+
+      if (selectedYear !== 'all' && yearStr !== selectedYear) return false;
+      if (selectedYear !== 'all' && selectedMonth !== 'all' && monthStr !== selectedMonth) return false;
+      
+      return true;
+    });
+  }, [historicalBills, selectedYear, selectedMonth]);
 
   const [manualInputMode, setManualInputMode] = useState(false);
   const [manualCost, setManualCost] = useState('');
@@ -553,7 +591,50 @@ export function BillUpload({ currentFinancials, onRefinedData, buildingId }: Bil
         >
           <div className="flex items-center justify-between mb-6">
             <h4 className="font-medium text-primary text-lg">Historical Bills & Trend Analysis</h4>
-            <button className="text-sm text-accent hover:text-accent-dark font-medium">View Full History</button>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <Filter className="w-4 h-4 text-primary/40" />
+                <select
+                  value={selectedYear}
+                  onChange={(e) => {
+                    setSelectedYear(e.target.value);
+                    setSelectedMonth('all');
+                  }}
+                  className="bg-transparent text-sm font-medium text-accent hover:text-accent-dark outline-none cursor-pointer p-0 m-0 border-none appearance-none"
+                  style={{ paddingRight: '0.5rem' }}
+                >
+                  <option value="all">All Years</option>
+                  {availableYears.map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
+              </div>
+
+              {selectedYear !== 'all' && (
+                <div className="flex items-center gap-2">
+                  <select
+                    value={selectedMonth}
+                    onChange={(e) => setSelectedMonth(e.target.value)}
+                    className="bg-transparent text-sm font-medium text-accent hover:text-accent-dark outline-none cursor-pointer p-0 m-0 border-none appearance-none"
+                    style={{ paddingRight: '0.25rem' }}
+                  >
+                    <option value="all">All Months</option>
+                    <option value="0">January</option>
+                    <option value="1">February</option>
+                    <option value="2">March</option>
+                    <option value="3">April</option>
+                    <option value="4">May</option>
+                    <option value="5">June</option>
+                    <option value="6">July</option>
+                    <option value="7">August</option>
+                    <option value="8">September</option>
+                    <option value="9">October</option>
+                    <option value="10">November</option>
+                    <option value="11">December</option>
+                  </select>
+                </div>
+              )}
+            </div>
           </div>
           
           <div className="overflow-x-auto">
@@ -569,7 +650,9 @@ export function BillUpload({ currentFinancials, onRefinedData, buildingId }: Bil
                 </tr>
               </thead>
               <tbody>
-                {historicalBills.map((bill, idx) => (
+                {filteredBills.map((bill, index) => {
+                  const idx = historicalBills.indexOf(bill);
+                  return (
                   <tr 
                     key={idx} 
                     className="group border-b border-black/5 last:border-0 hover:bg-black/[0.02] transition-colors cursor-pointer"
@@ -647,7 +730,8 @@ export function BillUpload({ currentFinancials, onRefinedData, buildingId }: Bil
                       </>
                     )}
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

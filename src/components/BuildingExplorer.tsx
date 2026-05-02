@@ -48,10 +48,10 @@ interface BuildingExplorerProps {
   onClose: () => void;
   onReviewReport: () => void;
   formatValue?: (value: number) => string;
-  confidenceScore?: 'Low' | 'Medium' | 'High';
+  confidenceScore?: 'Medium' | 'High';
 }
 
-export function BuildingExplorer({ building, onClose, onReviewReport, formatValue, confidenceScore = 'Low' }: BuildingExplorerProps) {
+export function BuildingExplorer({ building, onClose, onReviewReport, formatValue, confidenceScore = 'Medium' }: BuildingExplorerProps) {
   const financials = calculateFinancials(building);
   const [buildingSize, setBuildingSize] = useState('');
   const [electricityUsage, setElectricityUsage] = useState('');
