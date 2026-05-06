@@ -10,6 +10,9 @@ import {
   Instagram,
 } from "lucide-react";
 
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { db } from "../firebase";
+
 const FEATURES = [
   {
     title: "Neighbourhood Insights",
@@ -45,6 +48,9 @@ export function WaitlistPage() {
   const [submitted, setSubmitted] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % FEATURES.length);
@@ -52,10 +58,24 @@ export function WaitlistPage() {
     return () => clearInterval(timer);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (email && address) {
-      setSubmitted(true);
+      setIsSubmitting(true);
+      setError(null);
+      try {
+        await addDoc(collection(db, "waitlist"), {
+          email,
+          address,
+          createdAt: serverTimestamp(),
+        });
+        setSubmitted(true);
+      } catch (err: any) {
+        console.error("Error submitting waitlist:", err);
+        setError(err.message || "Something went wrong. Please try again.");
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -197,12 +217,28 @@ export function WaitlistPage() {
                     </div>
                   </div>
 
+                  {error && (
+                    <div className="text-rose-500 text-sm font-medium text-center">
+                      {error}
+                    </div>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full bg-accent hover:bg-accent-dark text-white px-6 py-4 rounded-xl font-medium transition-colors shadow-lg shadow-accent/20 flex items-center justify-center gap-2 mt-4"
+                    disabled={isSubmitting}
+                    className="w-full bg-accent hover:bg-accent-dark disabled:bg-accent/70 text-white px-6 py-4 rounded-xl font-medium transition-colors shadow-lg shadow-accent/20 flex items-center justify-center gap-2 mt-4"
                   >
-                    Get early access
-                    <ArrowRight className="w-5 h-5" />
+                    {isSubmitting ? (
+                      <div className="flex items-center gap-2">
+                        <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />
+                        Submitting...
+                      </div>
+                    ) : (
+                      <>
+                        Get early access
+                        <ArrowRight className="w-5 h-5" />
+                      </>
+                    )}
                   </button>
                 </form>
               )}
