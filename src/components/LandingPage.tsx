@@ -120,8 +120,8 @@ export function LandingPage({ onSelect }: LandingPageProps) {
                 </span>
                 Chicago Commercial Buildings
               </div>
-              <h1 className="text-5xl md:text-7xl font-semibold tracking-tight text-primary">
-                Chicago’s Commercial Energy Intelligence for Building Owners
+              <h1 className="text-4xl md:text-6xl font-semibold tracking-tight text-primary max-w-4xl mx-auto text-balance">
+                Chicago’s Energy Intelligence for Building Owners
               </h1>
               <p className="text-xl text-primary/60 max-w-2xl mx-auto leading-relaxed">
                 See exactly how much your building in Chicago is losing to energy inefficiency - and how to turn it into savings.

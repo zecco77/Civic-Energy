@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { WaitlistPage } from './components/WaitlistPage';
 import { LandingPage } from './components/LandingPage';
 import { BuildingSearchPage } from './components/BuildingSearchPage';
 import { Dashboard } from './components/Dashboard';
@@ -47,7 +48,8 @@ function AppContent() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route index element={<LandingPage onSelect={handleSelectBuilding} />} />
+        <Route index element={<WaitlistPage />} />
+        <Route path="home" element={<LandingPage onSelect={handleSelectBuilding} />} />
         <Route path="search" element={<BuildingSearchPage onSelect={handleSelectBuilding} />} />
         <Route path="platform" element={<PlatformPage />} />
         <Route path="features" element={<FeaturesPage />} />

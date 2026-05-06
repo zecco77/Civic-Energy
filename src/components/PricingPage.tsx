@@ -59,24 +59,6 @@ export function PricingPage() {
             <p className="text-primary/70 mb-8 leading-relaxed">
               We find where your building is wasting energy (electricity, heating, cooling), and show you how to fix it. You only pay us after you start saving money.
             </p>
-            
-            <div className="bg-bg rounded-2xl p-6 mb-8 border border-black/5">
-              <h4 className="font-semibold text-primary mb-4">Example:</h4>
-              <ul className="space-y-3">
-                <li className="flex justify-between items-center text-primary/80">
-                  <span>You save</span>
-                  <span className="font-semibold text-primary">$100,000/year</span>
-                </li>
-                <li className="flex justify-between items-center text-primary/80">
-                  <span>We take</span>
-                  <span className="font-semibold text-emerald-600">20–30% of the savings</span>
-                </li>
-                <li className="flex justify-between items-center text-primary/80 pt-3 border-t border-black/10">
-                  <span>You keep the rest</span>
-                  <span className="font-semibold text-primary text-lg">$70k–$80k/year</span>
-                </li>
-              </ul>
-            </div>
 
             <ul className="space-y-4 mb-8 flex-grow">
               <li className="flex items-start gap-3 text-primary/80">
