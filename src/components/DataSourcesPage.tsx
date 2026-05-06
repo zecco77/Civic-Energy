@@ -20,37 +20,56 @@ export function DataSourcesPage() {
       {/* Primary Data Sources Section */}
       <section className="py-24 bg-white border-y border-black/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="space-y-6">
               <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
                 <Building2 className="w-7 h-7" />
               </div>
-              <h3 className="text-2xl font-semibold text-primary tracking-tight">City of Chicago Benchmarking Ordinance Data</h3>
-              <p className="text-primary/60 leading-relaxed">
-                Official energy performance records for Chicago commercial buildings. This data provides a verified baseline of your building's actual energy consumption over a full calendar year.
+              <h3 className="text-xl font-semibold text-primary tracking-tight">Chicago Energy Benchmarking</h3>
+              <p className="text-primary/60 leading-relaxed text-sm">
+                Official energy performance records for Chicago commercial buildings. This data provides a verified baseline of your building's actual energy consumption.
               </p>
               <a 
                 href="https://data.cityofchicago.org/Environment-Sustainable-Development/Chicago-Energy-Benchmarking/7crp-atry" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-accent font-medium hover:underline"
+                className="inline-flex items-center gap-2 text-accent font-medium hover:underline text-sm"
               >
                 View Source Data <ExternalLink className="w-4 h-4" />
               </a>
             </div>
+            
+            <div className="space-y-6">
+              <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                <Building2 className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-semibold text-primary tracking-tight">Chicago Residential Data</h3>
+              <p className="text-primary/60 leading-relaxed text-sm">
+                Comprehensive data for residential building management and commercial applications throughout Chicago. Used for evaluating regional footprint targets.
+              </p>
+              <a 
+                href="https://data.cityofchicago.org/Community-Economic-Development/Residential/pa69-gxc6/about_data" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-accent font-medium hover:underline text-sm"
+              >
+                View Source Data <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
+
             <div className="space-y-6">
               <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
                 <Zap className="w-7 h-7" />
               </div>
-              <h3 className="text-2xl font-semibold text-primary tracking-tight">ComEd and Peoples Gas Rate Schedules</h3>
-              <p className="text-primary/60 leading-relaxed">
+              <h3 className="text-xl font-semibold text-primary tracking-tight">ComEd & Peoples Gas Rates</h3>
+              <p className="text-primary/60 leading-relaxed text-sm">
                 Current commercial tariffs and incentive program data. We use these to translate energy waste into actual dollars lost.
               </p>
               <a 
                 href="https://www.comed.com/MyAccount/MyService/Pages/RatesTariffs.aspx" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-accent font-medium hover:underline"
+                className="inline-flex items-center gap-2 text-accent font-medium hover:underline text-sm"
               >
                 View ComEd Rates <ExternalLink className="w-4 h-4" />
               </a>
@@ -59,15 +78,15 @@ export function DataSourcesPage() {
               <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
                 <CloudRain className="w-7 h-7" />
               </div>
-              <h3 className="text-2xl font-semibold text-primary tracking-tight">NOAA Chicago Weather Station</h3>
-              <p className="text-primary/60 leading-relaxed">
-                Historical degree day data for accurate weather normalization. This ensures we distinguish between a cold winter and an inefficient heating system.
+              <h3 className="text-xl font-semibold text-primary tracking-tight">NOAA Weather Station</h3>
+              <p className="text-primary/60 leading-relaxed text-sm">
+                Historical degree day data for accurate weather normalization. This ensures we distinguish between a cold winter and an inefficient system.
               </p>
               <a 
                 href="https://www.ncdc.noaa.gov/cdo-web/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-accent font-medium hover:underline"
+                className="inline-flex items-center gap-2 text-accent font-medium hover:underline text-sm"
               >
                 View NOAA Data <ExternalLink className="w-4 h-4" />
               </a>

@@ -69,16 +69,10 @@ export function Navbar() {
             ) : (
               <div className="flex items-center gap-4">
                 <Link
-                  to="/login"
-                  className="text-sm font-medium text-white/70 hover:text-white transition-colors"
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/signup"
+                  to="/"
                   className="bg-accent hover:bg-accent-dark text-white px-5 py-2 rounded-full text-sm font-medium transition-colors shadow-sm"
                 >
-                  Get Started
+                  Join the waitlist
                 </Link>
               </div>
             )}
@@ -128,18 +122,11 @@ export function Navbar() {
             ) : (
               <div className="px-3 pt-2 space-y-2">
                 <Link
-                  to="/login"
-                  onClick={() => setIsOpen(false)}
-                  className="block w-full text-center px-3 py-2 rounded-lg text-base font-medium text-white/70 hover:text-white hover:bg-white/10"
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/signup"
+                  to="/"
                   onClick={() => setIsOpen(false)}
                   className="block w-full text-center px-3 py-2 rounded-full text-base font-medium text-white bg-accent hover:bg-accent-dark shadow-sm"
                 >
-                  Get Started
+                  Join the waitlist
                 </Link>
               </div>
             )}

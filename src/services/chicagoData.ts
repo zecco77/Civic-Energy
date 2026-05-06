@@ -85,6 +85,65 @@ export interface ChicagoBuildingDetails {
   property_class?: string;
 }
 
+export interface ResidentialData {
+  account_number: string;
+  site_number: string;
+  legal_name: string;
+  doing_business_as_name: string;
+  address: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  license_status: string;
+  license_description: string;
+  latitude?: string;
+  longitude?: string;
+  location?: {
+    type: string;
+    coordinates: number[];
+  };
+}
+
+export async function getResidentialData(lat: string, lon: string, radiusMeters: number = 400): Promise<ResidentialData[]> {
+  if (!lat || !lon) return [];
+  
+  const whereClause = `within_circle(location,${lat},${lon},${radiusMeters})`;
+  const url = `https://data.cityofchicago.org/resource/pa69-gxc6.json?$where=${encodeURIComponent(whereClause)}&$limit=100`;
+  
+  try {
+    const response = await fetchWithTimeout(url, { timeout: 10000 });
+    if (!response.ok) {
+      console.error(`Residential data fetch failed with status: ${response.status}`);
+      return [];
+    }
+    const data = await response.json() as ResidentialData[];
+    return data;
+  } catch (error) {
+    console.error('Error fetching residential data:', error);
+    return [];
+  }
+}
+
+export async function searchResidentialData(query: string): Promise<ResidentialData[]> {
+  if (!query || query.length < 3) return [];
+  
+  const upperQuery = query.toUpperCase();
+  const url = `https://data.cityofchicago.org/resource/pa69-gxc6.json?$where=${encodeURIComponent(`upper(address) like '%${upperQuery}%' OR upper(doing_business_as_name) like '%${upperQuery}%'`)}&$limit=20`;
+  
+  try {
+    const response = await fetchWithTimeout(url, { timeout: 8000 });
+    if (!response.ok) {
+      console.error(`Residential search fetch failed with status: ${response.status}`);
+      return [];
+    }
+    const data = await response.json() as ResidentialData[];
+    return data;
+  } catch (error) {
+    console.error('Error searching residential data:', error);
+    return [];
+  }
+}
+
 export async function getChicagoBuildingDetails(address: string): Promise<ChicagoBuildingDetails | null> {
   const upperAddress = address.toUpperCase();
   const url = `https://data.cityofchicago.org/resource/ecdk-m9re.json?address=${encodeURIComponent(upperAddress)}&$limit=1`;
