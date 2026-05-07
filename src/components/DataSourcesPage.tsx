@@ -20,7 +20,7 @@ export function DataSourcesPage() {
       {/* Primary Data Sources Section */}
       <section className="py-24 bg-white border-y border-black/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="space-y-6">
               <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
                 <Building2 className="w-7 h-7" />
@@ -49,6 +49,42 @@ export function DataSourcesPage() {
               </p>
               <a 
                 href="https://data.cityofchicago.org/Community-Economic-Development/Residential/pa69-gxc6/about_data" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-accent font-medium hover:underline text-sm"
+              >
+                View Source Data <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
+
+            <div className="space-y-6">
+              <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                <Building2 className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-semibold text-primary tracking-tight">Cook County Assessor Modeling</h3>
+              <p className="text-primary/60 leading-relaxed text-sm">
+                Archived residential modeling data from the Cook County Assessor. Useful for understanding historical valuation properties, building age, and structural footprint details.
+              </p>
+              <a 
+                href="https://datacatalog.cookcountyil.gov/Property-Taxation/Assessor-Archived-05-11-2022-Residential-Modeling-/8f9d-wy2d/about_data" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-accent font-medium hover:underline text-sm"
+              >
+                View Source Data <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
+
+            <div className="space-y-6">
+              <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                <Building2 className="w-7 h-7" />
+              </div>
+              <h3 className="text-xl font-semibold text-primary tracking-tight">Chicago Building Permits</h3>
+              <p className="text-primary/60 leading-relaxed text-sm">
+                Real-time tracking of building permits issued by the City of Chicago. Crucial for timeline estimation, contractor checks, and validating reported work scopes.
+              </p>
+              <a 
+                href="https://data.cityofchicago.org/Buildings/Building-Permits/ydr8-5enu/about_data" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-accent font-medium hover:underline text-sm"

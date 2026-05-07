@@ -238,6 +238,94 @@ export interface CookCountyAssessorData {
   town_code?: string;
 }
 
+export interface CookCountyResidentialModel {
+  meta_pin: string;
+  char_age?: string;
+  char_use?: string;
+  char_type_resd?: string;
+  char_rooms?: string;
+  char_beds?: string;
+  char_baths?: string;
+  char_apts?: string;
+  econ_tax_rate?: string;
+  meta_class?: string;
+  geo_property_address?: string;
+}
+
+export async function getCookCountyResidentialModel(pin: string): Promise<CookCountyResidentialModel | null> {
+  // Try PIN with and without hyphens, depending on how data represents it.
+  const pinNoHyphens = pin.replace(/-/g, '');
+  const baseUrl = `https://datacatalog.cookcountyil.gov/resource/8f9d-wy2d.json?$where=${encodeURIComponent(`meta_pin like '%${pin}%' OR meta_pin like '%${pinNoHyphens}%'`)}&$limit=1`;
+  const urls = [baseUrl, `${COOK_COUNTY_PROXY}${encodeURIComponent(baseUrl)}`];
+
+  for (const url of urls) {
+    try {
+      const response = await fetchWithTimeout(url, { timeout: 10000 });
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.length > 0) return data[0];
+      }
+    } catch (error) {
+      console.warn(`Cook County residential model fetch failed for ${url}:`, error);
+    }
+  }
+
+  return null;
+}
+
+export interface BuildingPermit {
+  id: string;
+  permit_: string;
+  permit_type: string;
+  review_type: string;
+  application_start_date: string;
+  issue_date: string;
+  work_description: string;
+  total_fee: string;
+  reported_cost: string;
+  street_number: string;
+  street_direction: string;
+  street_name: string;
+  latitude?: string;
+  longitude?: string;
+}
+
+export async function getBuildingPermits(address: string, limit: number = 10): Promise<BuildingPermit[]> {
+  const upperAddress = address.toUpperCase();
+  // Extract just the street number and name if possible to improve matching, but direct address match is safer
+  // Address is usually like '835 N MICHIGAN AVE'
+  
+  const searchAddress = upperAddress.replace(/,.*$/, ''); // clean up city/state
+  
+  // We can try to match on the concatenation of street_number + street_direction + street_name
+  // but simpler to try a like matching a few parts
+  
+  // Simplistic approach: if we just have the full address, we break it down
+  const parts = searchAddress.split(' ');
+  const streetNumber = parts[0];
+  const streetName = parts.slice(1).join(' ');
+
+  let whereClause = `upper(street_name) like '%${streetName}%'`;
+  if (!isNaN(Number(streetNumber))) {
+    whereClause = `street_number = '${streetNumber}' AND ${whereClause}`;
+  }
+
+  const url = `https://data.cityofchicago.org/resource/ydr8-5enu.json?$where=${encodeURIComponent(whereClause)}&$limit=${limit}&$order=issue_date DESC`;
+  
+  try {
+    const response = await fetchWithTimeout(url, { timeout: 10000 });
+    if (!response.ok) {
+      console.error(`Building permits fetch failed with status: ${response.status}`);
+      return [];
+    }
+    const data = await response.json() as BuildingPermit[];
+    return data;
+  } catch (error) {
+    console.error('Error fetching building permits:', error);
+    return [];
+  }
+}
+
 export async function getCookCountyAssessorData(pin: string): Promise<CookCountyAssessorData | null> {
   const baseUrl = `https://datacatalog.cookcountyil.gov/resource/tx2p-k2g9.json?pin=${pin}&$limit=1`;
   const urls = [baseUrl, `${COOK_COUNTY_PROXY}${encodeURIComponent(baseUrl)}` ];

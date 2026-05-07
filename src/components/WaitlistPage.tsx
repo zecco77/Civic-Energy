@@ -7,11 +7,11 @@ import {
   ArrowRight,
   CheckCircle2,
   Linkedin,
-  Instagram,
 } from "lucide-react";
 
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "../firebase";
+import { cn } from "../lib/utils";
 
 const FEATURES = [
   {
@@ -44,7 +44,6 @@ const FEATURES = [
 export function WaitlistPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [address, setAddress] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -60,22 +59,31 @@ export function WaitlistPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email && address) {
-      setIsSubmitting(true);
-      setError(null);
-      try {
-        await addDoc(collection(db, "waitlist"), {
-          email,
-          address,
-          createdAt: serverTimestamp(),
-        });
-        setSubmitted(true);
-      } catch (err: any) {
-        console.error("Error submitting waitlist:", err);
-        setError(err.message || "Something went wrong. Please try again.");
-      } finally {
-        setIsSubmitting(false);
-      }
+    
+    if (!email.trim()) {
+      setError("Please enter your email address.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      await addDoc(collection(db, "waitlist"), {
+        email,
+        createdAt: serverTimestamp(),
+      });
+      setSubmitted(true);
+    } catch (err: any) {
+      console.error("Error submitting waitlist:", err);
+      setError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -99,30 +107,33 @@ export function WaitlistPage() {
           <div className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-3xl" />
         </div>
 
-        <main className="flex-1 w-full flex items-center justify-center relative z-10">
-          <div className="w-full max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-12 lg:gap-20 items-center z-10 pt-4 md:pt-8 w-full">
+        <main className="flex-1 w-full flex flex-col items-center justify-center relative z-10 mt-8">
+          <div className="w-full max-w-4xl mx-auto px-6 text-center z-10">
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="text-left"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-12 flex flex-col items-center"
             >
               <div className="inline-block px-4 py-1.5 rounded-full bg-accent/10 text-accent font-medium text-sm mb-6 border border-accent/20">
                 Exclusive Early Access
               </div>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-primary mb-6 leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-primary mb-6 leading-tight">
                 See how much money your building is losing to energy waste
-              </h2>
-              <p className="text-xl text-primary/60 max-w-xl leading-relaxed">
+              </h1>
+              <p className="text-xl text-primary/60 max-w-2xl mx-auto leading-relaxed">
                 Join the waitlist to be among the first to unlock insights for
                 commercial building energy performance.
               </p>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white p-8 md:p-10 rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-black/5"
+              className={cn(
+                "max-w-2xl mx-auto w-full",
+                submitted && "bg-white p-8 md:p-10 rounded-3xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-black/5"
+              )}
             >
               {submitted ? (
                 <motion.div
@@ -149,97 +160,56 @@ export function WaitlistPage() {
                     <p className="text-sm font-medium text-primary">
                       Follow us on
                     </p>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center justify-center">
                       <a
-                        href="https://linkedin.com"
+                        href="https://www.linkedin.com/company/civic-energy-futurist-chicago/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-primary/5 hover:bg-primary/10 text-primary p-3 rounded-full transition-colors flex items-center justify-center"
+                        className="bg-primary/5 hover:bg-primary/10 text-primary px-6 py-3 rounded-full transition-colors flex items-center justify-center gap-3"
                       >
                         <Linkedin className="w-6 h-6" />
-                      </a>
-                      <a
-                        href="https://instagram.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-primary/5 hover:bg-primary/10 text-primary p-3 rounded-full transition-colors flex items-center justify-center"
-                      >
-                        <Instagram className="w-6 h-6" />
+                        <span className="font-semibold tracking-tight">LinkedIn</span>
                       </a>
                     </div>
                   </div>
                 </motion.div>
               ) : (
-                <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-medium text-primary mb-2"
-                    >
-                      Email Address
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-primary/40">
-                        <Mail className="h-5 w-5" />
-                      </div>
-                      <input
-                        id="email"
-                        type="email"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="block w-full pl-11 pr-4 py-3.5 bg-bg/50 border border-black/10 rounded-xl focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors outline-none text-primary placeholder-primary/40"
-                        placeholder="you@company.com"
-                      />
+                <form onSubmit={handleSubmit} className="flex flex-col items-center w-full">
+                  <div className="relative flex items-center bg-white rounded-2xl p-2 shadow-xl shadow-black/5 w-full">
+                    <div className="absolute left-4 sm:left-6 text-primary/40 pointer-events-none">
+                      <Mail className="h-6 w-6" />
                     </div>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="address"
-                      className="block text-sm font-medium text-primary mb-2"
+                    <label htmlFor="email" className="sr-only">Email Address</label>
+                    <input
+                      id="email"
+                      type="email"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full pl-14 sm:pl-16 pr-32 sm:pr-[200px] py-4 sm:py-5 bg-transparent outline-none text-base sm:text-lg text-primary placeholder-primary/40 font-medium"
+                      placeholder="you@company.com"
+                    />
+                    <button
+                      type="submit"
+                      disabled={isSubmitting || email.length < 5}
+                      className="absolute right-2 top-2 bottom-2 px-6 sm:px-8 bg-accent hover:bg-accent-dark disabled:bg-black/5 disabled:text-primary/40 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
                     >
-                      Building Address
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-primary/40">
-                        <Building2 className="h-5 w-5" />
-                      </div>
-                      <input
-                        id="address"
-                        type="text"
-                        required
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        className="block w-full pl-11 pr-4 py-3.5 bg-bg/50 border border-black/10 rounded-xl focus:ring-2 focus:ring-accent/20 focus:border-accent transition-colors outline-none text-primary placeholder-primary/40"
-                        placeholder="e.g. 111 S Wacker Dr, Chicago"
-                      />
-                    </div>
+                      {isSubmitting ? (
+                        <div className="w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin" />
+                      ) : (
+                        <>
+                          <span className="hidden sm:inline">Get early access</span>
+                          <span className="sm:hidden">Join</span>
+                          <ArrowRight className="w-5 h-5 hidden sm:block" />
+                        </>
+                      )}
+                    </button>
                   </div>
-
                   {error && (
-                    <div className="text-rose-500 text-sm font-medium text-center">
+                    <div className="text-rose-500 text-sm font-medium mt-4">
                       {error}
                     </div>
                   )}
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-accent hover:bg-accent-dark disabled:bg-accent/70 text-white px-6 py-4 rounded-xl font-medium transition-colors shadow-lg shadow-accent/20 flex items-center justify-center gap-2 mt-4"
-                  >
-                    {isSubmitting ? (
-                      <div className="flex items-center gap-2">
-                        <div className="w-4 h-4 border-2 border-white/50 border-t-white rounded-full animate-spin" />
-                        Submitting...
-                      </div>
-                    ) : (
-                      <>
-                        Get early access
-                        <ArrowRight className="w-5 h-5" />
-                      </>
-                    )}
-                  </button>
                 </form>
               )}
             </motion.div>

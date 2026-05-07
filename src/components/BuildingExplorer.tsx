@@ -18,7 +18,11 @@ import {
   Tooltip as RechartsTooltip, 
   Cell 
 } from 'recharts';
-import { BenchmarkingData, getChicagoBuildingDetails, getCookCountyProperty, getCookCountyAssessorData, ChicagoBuildingDetails, CookCountyProperty, CookCountyAssessorData } from '../services/chicagoData';
+import { 
+  BenchmarkingData, getChicagoBuildingDetails, getCookCountyProperty, getCookCountyAssessorData, 
+  ChicagoBuildingDetails, CookCountyProperty, CookCountyAssessorData, BuildingPermit, getBuildingPermits,
+  CookCountyResidentialModel, getCookCountyResidentialModel
+} from '../services/chicagoData';
 import { calculateFinancials, formatCurrency } from '../services/financials';
 import { NeighborhoodMap } from './NeighborhoodMap';
 import { cn } from '../lib/utils';
@@ -62,6 +66,8 @@ export function BuildingExplorer({ building, onClose, onReviewReport, formatValu
   const [chicagoDetails, setChicagoDetails] = useState<ChicagoBuildingDetails | null>(null);
   const [cookCountyData, setCookCountyData] = useState<CookCountyProperty | null>(null);
   const [assessorData, setAssessorData] = useState<CookCountyAssessorData | null>(null);
+  const [assessorResidentialData, setAssessorResidentialData] = useState<CookCountyResidentialModel | null>(null);
+  const [buildingPermits, setBuildingPermits] = useState<BuildingPermit[]>([]);
   const [isInPortfolio, setIsInPortfolio] = useState(false);
   const [isTracking, setIsTracking] = useState(false);
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
@@ -75,10 +81,13 @@ export function BuildingExplorer({ building, onClose, onReviewReport, formatValu
   useEffect(() => {
     if (building.address) {
       getChicagoBuildingDetails(building.address).then(setChicagoDetails);
+      getBuildingPermits(building.address).then(setBuildingPermits);
+      
       getCookCountyProperty(building.address).then(data => {
         setCookCountyData(data);
         if (data?.pin) {
           getCookCountyAssessorData(data.pin).then(setAssessorData);
+          getCookCountyResidentialModel(data.pin).then(setAssessorResidentialData);
         }
       });
     }
@@ -263,7 +272,7 @@ export function BuildingExplorer({ building, onClose, onReviewReport, formatValu
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-bg p-4 rounded-2xl">
               <p className="text-[10px] uppercase tracking-wider text-primary/40 font-bold mb-1">Year Built</p>
-              <p className="text-sm font-bold text-primary">{building.year_built || chicagoDetails?.year_built || 'N/A'}</p>
+              <p className="text-sm font-bold text-primary">{building.year_built || chicagoDetails?.year_built || assessorResidentialData?.char_age || 'N/A'}</p>
             </div>
             <div className="bg-bg p-4 rounded-2xl">
               <p className="text-[10px] uppercase tracking-wider text-primary/40 font-bold mb-1">Floor Area</p>
@@ -293,7 +302,38 @@ export function BuildingExplorer({ building, onClose, onReviewReport, formatValu
                   </div>
                 </div>
               )}
+              {assessorResidentialData && (
+                 <div className="bg-bg p-4 rounded-2xl col-span-2">
+                 <div className="flex justify-between items-start">
+                   <div>
+                     <p className="text-[10px] uppercase tracking-wider text-primary/40 font-bold mb-1">Res. Units/Rooms</p>
+                     <p className="text-sm font-bold text-primary">{assessorResidentialData.char_apts || 'N/A'} / {assessorResidentialData.char_rooms || 'N/A'}</p>
+                   </div>
+                   <div className="text-right">
+                     <p className="text-[10px] uppercase tracking-wider text-primary/40 font-bold mb-1">Beds/Baths</p>
+                     <p className="text-sm font-bold text-primary">{assessorResidentialData.char_beds || 'N/A'} / {assessorResidentialData.char_baths || 'N/A'}</p>
+                   </div>
+                 </div>
+               </div>
+              )}
           </div>
+          
+          {buildingPermits.length > 0 && (
+             <div className="mt-6">
+                <p className="text-[10px] uppercase tracking-wider text-primary/40 font-bold mb-3">Recent Permits ({buildingPermits.length})</p>
+                <div className="space-y-3">
+                  {buildingPermits.map((permit) => (
+                    <div key={permit.id} className="bg-bg p-3 rounded-xl">
+                      <div className="flex justify-between items-start mb-1">
+                        <p className="text-xs font-bold text-primary">{permit.permit_type}</p>
+                        <p className="text-[10px] text-primary/60">{new Date(permit.issue_date).toLocaleDateString()}</p>
+                      </div>
+                      <p className="text-xs text-primary/80 line-clamp-2">{permit.work_description}</p>
+                    </div>
+                  ))}
+                </div>
+             </div>
+          )}
         </div>
 
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-black/5">
