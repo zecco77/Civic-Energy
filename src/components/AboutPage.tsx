@@ -22,7 +22,7 @@ export function AboutPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <h2 className="text-3xl font-semibold text-primary tracking-tight">Our Story</h2>
           <p className="text-lg text-primary/70 leading-relaxed">
-            Civic Energy was founded in 2024 with a simple goal: to help Chicago building owners navigate the complex world of energy efficiency. We saw a gap between the public data available and the actionable insights owners needed to make informed decisions.
+            Civic Energy was founded in 2026 with a simple goal: to help Chicago building owners navigate the complex world of energy efficiency. We saw a gap between the public data available and the actionable insights owners needed to make informed decisions.
           </p>
           <p className="text-lg text-primary/70 leading-relaxed">
             By combining public benchmarking data with advanced analytics and a deep understanding of local utility programs, we've built a platform that turns data into dollars.

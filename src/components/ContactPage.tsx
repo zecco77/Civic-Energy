@@ -31,7 +31,7 @@ export function ContactPage() {
                 <div>
                   <h3 className="font-semibold text-lg mb-1">Email us</h3>
                   <p className="text-primary/60 mb-2">For sales and enterprise inquiries.</p>
-                  <a href="mailto:zalipatel7777@gmail.com" className="text-primary font-medium hover:underline">zalipatel7777@gmail.com</a>
+                  <a href="mailto:zecco@civic-energy.com" className="text-primary font-medium hover:underline">zecco@civic-energy.com</a>
                 </div>
               </div>
 
@@ -43,21 +43,6 @@ export function ContactPage() {
                   <h3 className="font-semibold text-lg mb-1">Call us</h3>
                   <p className="text-primary/60 mb-2">Mon-Fri from 9am to 5pm CST.</p>
                   <a href="tel:+1 (630) 816-1489" className="text-primary font-medium hover:underline">+1 (630) 816-1489</a>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-6">
-                <div className="w-12 h-12 bg-primary/5 rounded-2xl flex items-center justify-center shrink-0">
-                  <MapPin className="w-6 h-6 text-primary" />
-                </div>
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">Visit us</h3>
-                  <p className="text-primary/60 mb-2">Our Chicago headquarters office.</p>
-                  <address className="not-italic text-primary font-medium">
-                    217 W 23rd<br />
-                    #2N<br />
-                    Chicago, IL 60616
-                  </address>
                 </div>
               </div>
             </div>

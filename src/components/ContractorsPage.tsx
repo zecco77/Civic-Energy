@@ -275,7 +275,10 @@ export function ContractorsPage() {
           >
             Find Contractors
           </button>
-          <button className="w-full sm:w-auto bg-white border border-black/10 hover:bg-black/5 text-primary px-8 py-4 rounded-full font-medium text-lg transition-colors shadow-sm">
+          <button 
+            onClick={() => document.getElementById('application-form')?.scrollIntoView({ behavior: 'smooth' })}
+            className="w-full sm:w-auto bg-white border border-black/10 hover:bg-black/5 text-primary px-8 py-4 rounded-full font-medium text-lg transition-colors shadow-sm"
+          >
             Join as a Contractor
           </button>
         </div>
@@ -476,7 +479,7 @@ export function ContractorsPage() {
       </section>
 
       {/* For Contractors Section */}
-      <section className="py-24 bg-bg border-l-4 border-primary">
+      <section id="application-form" className="py-24 bg-bg border-l-4 border-primary">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row gap-16 items-center">
           <div className="lg:w-1/2 space-y-8">
             <h2 className="text-4xl font-semibold text-primary tracking-tight">Grow your Chicago contracting business.</h2>
