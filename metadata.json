@@ -1,5 +1,6 @@
 {
-  "name": "Remix: Civic Energy - SaaS",
-  "description": "A climate-tech SaaS platform for Chicago commercial building owners to identify and fix energy inefficiencies.",
-  "requestFramePermissions": []
+  "name": "Civic Energy ",
+  "description": "Turn hidden building energy waste into real savings with instant, actionable intelligence.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
 }
