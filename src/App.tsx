@@ -23,6 +23,7 @@ import { MethodologyPage } from './components/MethodologyPage';
 import { DataSourcesPage } from './components/DataSourcesPage';
 import { AboutPage } from './components/AboutPage';
 import { TeamPage } from './components/TeamPage';
+import { SlidesPage } from './components/SlidesPage';
 import { PrivacyPage, TermsPage, AccuracyPage } from './components/LegalPages';
 import { BlogPage, CareersPage } from './components/CompanyPages';
 import { BenchmarkingData } from './services/chicagoData';
@@ -85,6 +86,7 @@ function AppContent() {
         <Route path="data-sources" element={<DataSourcesPage />} />
         <Route path="about" element={<AboutPage />} />
         <Route path="team" element={<TeamPage />} />
+        <Route path="slides" element={<SlidesPage />} />
         <Route path="blog" element={<BlogPage />} />
         <Route path="careers" element={<CareersPage />} />
         <Route path="privacy" element={<PrivacyPage />} />

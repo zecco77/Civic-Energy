@@ -22,9 +22,7 @@ const TEAM = [
 
 export function TeamPage() {
   return (
-    <div className="min-h-screen bg-bg flex flex-col font-sans">
-      <Navbar />
-      
+    <div className="bg-bg flex flex-col font-sans">
       <main className="flex-1 pt-32 pb-24">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-8 border-b-2 border-accent pb-2">
@@ -56,8 +54,6 @@ export function TeamPage() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }
