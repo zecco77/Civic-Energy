@@ -25,7 +25,6 @@ export function Navbar() {
     { name: "Features", path: "/features" },
     { name: "Contractors", path: "/contractors" },
     { name: "Pricing", path: "/pricing" },
-    { name: "Pitch Deck", path: "/slides" },
   ];
 
   return (
