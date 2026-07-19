@@ -49,7 +49,7 @@ export function SignupPage() {
         createdAt: new Date().toISOString()
       });
       
-      setStep(2); // Proceed to step 2
+      navigate('/onboarding');
     } catch (err: any) {
       setError(err.message || 'Failed to sign up');
     } finally {
@@ -71,7 +71,7 @@ export function SignupPage() {
         createdAt: new Date().toISOString()
       }, { merge: true });
 
-      navigate(from);
+      navigate('/onboarding');
     } catch (err: any) {
       if (err.code !== 'auth/popup-closed-by-user' && err.code !== 'auth/cancelled-popup-request') {
         setError(err.message || 'Failed to sign up with Google');
@@ -117,15 +117,11 @@ export function SignupPage() {
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
             <h2 className="text-2xl font-semibold text-primary tracking-tight">
-              {step === 1 ? 'Create your free account' : 'Tell us about your building'}
+              Create your free account
             </h2>
-            {step === 2 && (
-              <p className="text-primary/60 mt-2">This helps us pre-load your analysis.</p>
-            )}
           </div>
           
-          {step === 1 ? (
-            <>
+          <>
               <form className="space-y-6" onSubmit={handleSignup}>
                 {error && (
                   <div className="bg-rose-50 text-rose-600 p-3 rounded-lg text-sm text-center">
@@ -277,62 +273,6 @@ export function SignupPage() {
                 </Link>
               </div>
             </>
-          ) : (
-            <form className="space-y-6">
-              <div className="relative">
-                <label className="block text-sm font-medium text-primary/60 mb-1">Building Address</label>
-                <div className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary/40" />
-                  <input 
-                    type="text" 
-                    className="w-full bg-bg border border-black/5 rounded-xl pl-12 pr-4 py-3 text-primary placeholder-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/50" 
-                    placeholder="Enter Chicago address" 
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-primary/60 mb-1">Building Type</label>
-                <select defaultValue="" className="w-full bg-bg border border-black/5 rounded-xl px-4 py-3 text-primary focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none">
-                  <option value="" disabled>Select type</option>
-                  <option value="office">Office</option>
-                  <option value="retail">Retail</option>
-                  <option value="industrial">Industrial</option>
-                  <option value="mixed">Mixed Use</option>
-                  <option value="multifamily">Multifamily</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-primary/60 mb-1">Approximate Square Footage</label>
-                <select defaultValue="" className="w-full bg-bg border border-black/5 rounded-xl px-4 py-3 text-primary focus:outline-none focus:ring-2 focus:ring-primary/50 appearance-none">
-                  <option value="" disabled>Select size</option>
-                  <option value="under50k">Under 50,000 sq ft</option>
-                  <option value="50k-100k">50,000 - 100,000 sq ft</option>
-                  <option value="100k-250k">100,000 - 250,000 sq ft</option>
-                  <option value="over250k">Over 250,000 sq ft</option>
-                </select>
-              </div>
-
-              <div className="pt-4 flex flex-col gap-4">
-                <button 
-                  type="button" 
-                  onClick={() => navigate(from)}
-                  className="w-full bg-accent hover:bg-accent-dark text-white px-4 py-3 rounded-full font-medium text-lg transition-colors shadow-sm"
-                >
-                  {from === '/dashboard' ? 'Continue to Dashboard' : 'Go to My Profile'}
-                </button>
-                <button 
-                  type="button"
-                  onClick={() => navigate(from)}
-                  className="text-sm text-primary/60 hover:text-primary transition-colors"
-                >
-                  Skip for now
-                </button>
-              </div>
-            </form>
-          )}
         </div>
       </div>
     </div>

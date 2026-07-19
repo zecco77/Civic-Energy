@@ -507,29 +507,6 @@ export function WaitlistPage() {
         </div>
       </section>
 
-      {/* Logos */}
-      <section className="py-16 bg-primary text-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center gap-8 mb-16">
-            <h2 className="text-4xl md:text-5xl font-light tracking-tight whitespace-nowrap">
-              Our customers & collaborators
-            </h2>
-            <div className="h-px bg-accent flex-1" />
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="bg-white rounded-2xl p-8 flex items-center justify-center aspect-[3/2]"
-              >
-                <div className="w-full h-full bg-black/5 rounded animate-pulse" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* News */}
       <section className="py-16 bg-primary text-white border-t border-white/10">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-12">

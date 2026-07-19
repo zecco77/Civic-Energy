@@ -147,7 +147,11 @@ export function BuildingSearchPage({ onSelect }: BuildingSearchPageProps) {
                             {building.property_name || building.address}
                           </h3>
                           <p className="text-sm text-primary/60 mt-0.5">
-                            {building.address} • {building.primary_property_type} • {building.gross_floor_area_buildings_sq_ft} sq ft
+                            {[
+                              building.address,
+                              building.primary_property_type,
+                              building.gross_floor_area_buildings_sq_ft ? `${building.gross_floor_area_buildings_sq_ft} sq ft` : null
+                            ].filter(Boolean).join(' • ')}
                           </p>
                         </div>
                       </div>

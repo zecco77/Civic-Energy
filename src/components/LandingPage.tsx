@@ -121,7 +121,7 @@ export function LandingPage({ onSelect }: LandingPageProps) {
                 Chicago Commercial Buildings
               </div>
               <h1 className="text-4xl md:text-6xl font-semibold tracking-tight text-primary max-w-4xl mx-auto text-balance">
-                Chicago's Data-driven Energy Intelligence for buildings
+                Smart energy intelligence for Chicago's commercial buildings
               </h1>
               <p className="text-xl text-primary/60 max-w-2xl mx-auto leading-relaxed">
                 See exactly how much your building in Chicago is losing to energy inefficiency - and how to turn it into savings.
@@ -192,7 +192,11 @@ export function LandingPage({ onSelect }: LandingPageProps) {
                                 {building.property_name || building.address}
                               </h3>
                               <p className="text-sm text-primary/60 mt-0.5">
-                                {building.address} • {building.primary_property_type} • {building.gross_floor_area_buildings_sq_ft} sq ft
+                                {[
+                                  building.address,
+                                  building.primary_property_type,
+                                  building.gross_floor_area_buildings_sq_ft ? `${building.gross_floor_area_buildings_sq_ft} sq ft` : null
+                                ].filter(Boolean).join(' • ')}
                               </p>
                             </div>
                           </div>
@@ -424,24 +428,6 @@ export function LandingPage({ onSelect }: LandingPageProps) {
                 />
               ))}
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Logos */}
-      <section className="py-16 bg-primary text-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center gap-8 mb-16">
-            <h2 className="text-4xl md:text-5xl font-light tracking-tight whitespace-nowrap">Our customers & collaborators</h2>
-            <div className="h-px bg-accent flex-1" />
-          </div>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-white rounded-2xl p-8 flex items-center justify-center aspect-[3/2]">
-                <div className="w-full h-full bg-black/5 rounded animate-pulse" />
-              </div>
-            ))}
           </div>
         </div>
       </section>

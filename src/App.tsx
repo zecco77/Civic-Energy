@@ -26,6 +26,7 @@ import { TeamPage } from './components/TeamPage';
 import { PrivacyPage, TermsPage, AccuracyPage } from './components/LegalPages';
 import { BlogPage, CareersPage } from './components/CompanyPages';
 import { BenchmarkingData } from './services/chicagoData';
+import { OnboardingPage } from './components/OnboardingPage';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -93,6 +94,7 @@ function AppContent() {
       </Route>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
+      <Route path="/onboarding" element={<OnboardingPage />} />
       <Route path="/payment" element={<PaymentPage />} />
     </Routes>
   );

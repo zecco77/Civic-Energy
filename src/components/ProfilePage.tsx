@@ -456,9 +456,15 @@ export function ProfilePage({ onSelect }: ProfilePageProps) {
                     />
                     <p className="text-xs text-primary/40 mt-2">Email address cannot be changed. Contact support for assistance.</p>
                   </div>
-                  <div className="pt-4">
+                  <div className="pt-4 flex gap-4">
                     <button className="bg-primary text-white px-8 py-3 rounded-full font-bold hover:bg-black transition-colors">
                       Save Changes
+                    </button>
+                    <button 
+                      onClick={() => navigate('/onboarding')}
+                      className="bg-accent text-white px-8 py-3 rounded-full font-bold hover:bg-accent-dark transition-colors"
+                    >
+                      Complete Onboarding
                     </button>
                   </div>
                 </div>
